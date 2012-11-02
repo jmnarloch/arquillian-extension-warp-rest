@@ -32,6 +32,10 @@
         <version.jboss_spec>3.0.0.Final</version.jboss_spec>
         <version.org.jboss.jbossas>7.1.1.Final</version.org.jboss.jbossas>
 
+        <version.resteasy>2.3.4.Final</version.resteasy>
+        <version.jersey>1.15</version.jersey>
+        <version.cxf>2.7.0</version.cxf>
+
         <!-- override from parent -->
         <maven.compiler.argument.target>1.5</maven.compiler.argument.target>
         <maven.compiler.argument.source>1.5</maven.compiler.argument.source>
@@ -126,6 +130,24 @@
                 <groupId>org.jboss.arquillian.container</groupId>
                 <artifactId>arquillian-container-test-impl-base</artifactId>
                 <version>${version.arquillian_core}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jboss.resteasy</groupId>
+                <artifactId>resteasy-jaxrs</artifactId>
+                <version>${version.resteasy}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.sun.jersey</groupId>
+                <artifactId>jersey-server</artifactId>
+                <version>${version.jersey}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-rt-frontend-jaxrs</artifactId>
+                <version>${version.cxf}</version>
             </dependency>
 
             <dependency>
