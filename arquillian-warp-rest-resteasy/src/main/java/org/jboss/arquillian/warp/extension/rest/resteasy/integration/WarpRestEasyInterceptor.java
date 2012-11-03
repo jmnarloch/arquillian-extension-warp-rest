@@ -39,15 +39,18 @@ public class WarpRestEasyInterceptor implements PreProcessInterceptor, PostProce
      * {@inheritDoc}
      */
     @Override
-    public void postProcess(ServerResponse serverResponse) {
+    public ServerResponse preProcess(HttpRequest httpRequest, ResourceMethod resourceMethod) throws Failure, WebApplicationException {
 
+        // TODO wrap the
+
+        return null;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public ServerResponse preProcess(HttpRequest httpRequest, ResourceMethod resourceMethod) throws Failure, WebApplicationException {
-        return null;
+    public void postProcess(ServerResponse serverResponse) {
+
     }
 }

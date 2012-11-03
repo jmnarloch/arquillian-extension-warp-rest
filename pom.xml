@@ -23,7 +23,9 @@
 
     <properties>
         <!-- Arquillian -->
-        <version.arquillian_core>1.0.0.Final</version.arquillian_core>
+        <version.arquillian_core>1.0.3.Final</version.arquillian_core>
+        <version.arquillian_drone>1.0.0.Final</version.arquillian_drone>
+        <version.arquillian_warp>1.0.0.Alpha1</version.arquillian_warp>
 
         <!-- Tests -->
         <version.junit>4.10</version.junit>
@@ -67,6 +69,33 @@
     <dependencyManagement>
         <dependencies>
 
+            <!-- Arquillian Core -->
+            <dependency>
+                <groupId>org.jboss.arquillian</groupId>
+                <artifactId>arquillian-bom</artifactId>
+                <version>${version.arquillian_core}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- Arquillian Drone -->
+            <dependency>
+                <groupId>org.jboss.arquillian.extension</groupId>
+                <artifactId>arquillian-drone-bom</artifactId>
+                <version>${version.arquillian_drone}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- Arquillian Warp -->
+            <dependency>
+                <groupId>org.jboss.arquillian.extension</groupId>
+                <artifactId>arquillian-warp-bom</artifactId>
+                <version>${version.arquillian_warp}</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+
             <dependency>
                 <groupId>org.jboss.arquillian.extension</groupId>
                 <artifactId>arquillian-warp-rest-api</artifactId>
@@ -103,15 +132,6 @@
                 <version>${project.version}</version>
             </dependency>
 
-            <!-- Arquillian Core -->
-            <dependency>
-                <groupId>org.jboss.arquillian</groupId>
-                <artifactId>arquillian-bom</artifactId>
-                <version>${version.arquillian_core}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-
             <dependency>
                 <groupId>org.jboss.arquillian.test</groupId>
                 <artifactId>arquillian-test-impl-base</artifactId>
@@ -124,12 +144,6 @@
                 <artifactId>arquillian-core-impl-base</artifactId>
                 <version>${version.arquillian_core}</version>
                 <classifier>tests</classifier>
-            </dependency>
-
-            <dependency>
-                <groupId>org.jboss.arquillian.container</groupId>
-                <artifactId>arquillian-container-test-impl-base</artifactId>
-                <version>${version.arquillian_core}</version>
             </dependency>
 
             <dependency>

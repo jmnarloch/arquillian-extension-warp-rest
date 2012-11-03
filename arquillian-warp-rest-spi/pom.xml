@@ -34,6 +34,11 @@
     <!-- Dependencies -->
     <dependencies>
 
+        <dependency>
+            <groupId>org.jboss.shrinkwrap</groupId>
+            <artifactId>shrinkwrap-api</artifactId>
+        </dependency>
+
     </dependencies>
 
 </project>
