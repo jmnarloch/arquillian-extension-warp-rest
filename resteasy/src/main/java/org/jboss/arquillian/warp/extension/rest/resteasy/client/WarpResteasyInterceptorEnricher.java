@@ -15,20 +15,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp.extension.rest.impl.container;
+package org.jboss.arquillian.warp.extension.rest.resteasy.client;
 
-import org.jboss.arquillian.container.test.spi.RemoteLoadableExtension;
+import org.jboss.arquillian.warp.extension.rest.resteasy.integration.WarpResteasyInterceptor;
+import org.jboss.arquillian.warp.extension.rest.spi.WarpRestInterceptorEnricher;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 
 /**
  *
  */
-public class WarpRestRemoteExtension implements RemoteLoadableExtension {
+public class WarpResteasyInterceptorEnricher implements WarpRestInterceptorEnricher {
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public void register(ExtensionBuilder extensionBuilder) {
-        //To change body of implemented methods use File | Settings | File Templates.
+    public void enrichWebArchive(WebArchive archive) {
+
+        archive.addClass(WarpResteasyInterceptor.class);
     }
 }
