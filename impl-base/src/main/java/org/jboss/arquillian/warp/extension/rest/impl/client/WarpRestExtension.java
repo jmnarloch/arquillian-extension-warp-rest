@@ -17,6 +17,7 @@
  */
 package org.jboss.arquillian.warp.extension.rest.impl.client;
 
+import org.jboss.arquillian.container.test.spi.RemoteLoadableExtension;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.spi.ServiceLoader;
@@ -54,6 +55,9 @@ public class WarpRestExtension implements WarpLifecycleExtension {
 
         // adds the implementation classes
         archive.addPackage(WarpRestRemoteExtension.class.getPackage());
+
+        // registers the extension
+        archive.addAsServiceProvider(RemoteLoadableExtension.class, WarpRestRemoteExtension.class);
 
         return archive;
     }
