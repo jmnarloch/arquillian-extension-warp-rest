@@ -44,13 +44,13 @@
     </properties>
 
     <modules>
-        <module>arquillian-warp-rest-api</module>
-        <module>arquillian-warp-rest-spi</module>
-        <module>arquillian-warp-rest-impl-base</module>
-        <module>arquillian-warp-rest-resteasy</module>
-        <module>arquillian-warp-rest-jersey</module>
-        <module>arquillian-warp-rest-cxf</module>
-        <module>arquillian-warp-rest-bom</module>
+        <module>api</module>
+        <module>spi</module>
+        <module>impl-base</module>
+        <module>resteasy</module>
+        <module>jersey</module>
+        <module>cxf</module>
+        <module>bom</module>
     </modules>
 
     <build>
