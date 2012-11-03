@@ -33,7 +33,7 @@ import javax.ws.rs.ext.Provider;
  */
 @Provider
 @ServerInterceptor
-public class WarpRestEasyInterceptor implements PreProcessInterceptor, PostProcessInterceptor {
+public class WarpResteasyInterceptor implements PreProcessInterceptor, PostProcessInterceptor {
 
     /**
      * {@inheritDoc}
