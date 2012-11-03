@@ -15,23 +15,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp.extension.rest.impl.container;
-
-import org.jboss.arquillian.container.test.spi.RemoteLoadableExtension;
-import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
-import org.jboss.arquillian.warp.extension.rest.impl.provider.RestContextProvider;
+package org.jboss.arquillian.warp.extension.rest.api;
 
 /**
  *
  */
-public class WarpRestRemoteExtension implements RemoteLoadableExtension {
+public enum HttpMethod {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void register(ExtensionBuilder extensionBuilder) {
+    GET,
 
-        extensionBuilder.service(ResourceProvider.class, RestContextProvider.class);
-    }
+    PUT,
+
+    POST,
+
+    DELETE
 }

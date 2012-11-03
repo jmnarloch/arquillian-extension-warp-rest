@@ -15,23 +15,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp.extension.rest.impl.container;
+package org.jboss.arquillian.warp.extension.rest.impl.provider;
 
-import org.jboss.arquillian.container.test.spi.RemoteLoadableExtension;
+import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
-import org.jboss.arquillian.warp.extension.rest.impl.provider.RestContextProvider;
+import org.jboss.arquillian.warp.extension.rest.api.RestContext;
+
+import java.lang.annotation.Annotation;
 
 /**
  *
  */
-public class WarpRestRemoteExtension implements RemoteLoadableExtension {
+public class RestContextProvider implements ResourceProvider {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void register(ExtensionBuilder extensionBuilder) {
+    public boolean canProvide(Class<?> aClass) {
 
-        extensionBuilder.service(ResourceProvider.class, RestContextProvider.class);
+        return RestContext.class.equals(aClass);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Object lookup(ArquillianResource arquillianResource, Annotation... annotations) {
+        // TODO implement
+        return null;
     }
 }

@@ -41,7 +41,7 @@ public class WarpResteasyInterceptor implements PreProcessInterceptor, PostProce
     @Override
     public ServerResponse preProcess(HttpRequest httpRequest, ResourceMethod resourceMethod) throws Failure, WebApplicationException {
 
-        // TODO wrap the
+        // TODO wrap the request and additional data of currently executing context
 
         return null;
     }
