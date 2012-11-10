@@ -51,6 +51,7 @@
         <module>jersey</module>
         <module>cxf</module>
         <module>bom</module>
+        <module>ftest</module>
     </modules>
 
     <build>
