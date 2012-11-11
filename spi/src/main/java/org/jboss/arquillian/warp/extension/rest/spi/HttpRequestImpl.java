@@ -52,7 +52,7 @@ public class HttpRequestImpl implements HttpRequest {
      */
     @Override
     public HttpMethod getMethod() {
-        return null;
+        return httpMethod;
     }
 
     /**
@@ -69,7 +69,7 @@ public class HttpRequestImpl implements HttpRequest {
      */
     @Override
     public String getContentType() {
-        return null;
+        return contentType;
     }
 
     /**
@@ -86,7 +86,7 @@ public class HttpRequestImpl implements HttpRequest {
      */
     @Override
     public Object getEntity() {
-        return null;
+        return entity;
     }
 
     /**

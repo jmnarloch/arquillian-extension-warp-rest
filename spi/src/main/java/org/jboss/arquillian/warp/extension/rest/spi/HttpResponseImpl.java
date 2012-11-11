@@ -25,6 +25,11 @@ import org.jboss.arquillian.warp.extension.rest.api.HttpResponse;
 public class HttpResponseImpl implements HttpResponse {
 
     /**
+     * Represents the content type.
+     */
+    private String contentType;
+
+    /**
      * Represents the response entity.
      */
     private Object entity;
@@ -40,8 +45,25 @@ public class HttpResponseImpl implements HttpResponse {
      * {@inheritDoc}
      */
     @Override
+    public String getContentType() {
+        return contentType;
+    }
+
+    /**
+     * Sets the content type.
+     *
+     * @param contentType the content type
+     */
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Object getEntity() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return entity;
     }
 
     /**
