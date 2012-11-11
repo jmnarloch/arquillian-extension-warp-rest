@@ -67,17 +67,17 @@
             </dependency>
             <dependency>
                 <groupId>org.jboss.arquillian.extension</groupId>
-                <artifactId>arquillian-warp-rest-resteasy</artifactId>
+                <artifactId>arquillian-warp-rest-impl-resteasy</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.jboss.arquillian.extension</groupId>
-                <artifactId>arquillian-warp-rest-jersey</artifactId>
+                <artifactId>arquillian-warp-rest-impl-jersey</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.jboss.arquillian.extension</groupId>
-                <artifactId>arquillian-warp-rest-cxf</artifactId>
+                <artifactId>arquillian-warp-rest-impl-cxf</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>
