@@ -17,16 +17,24 @@
  */
 package org.jboss.arquillian.warp.extension.rest.impl.provider;
 
+import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
 import org.jboss.arquillian.warp.extension.rest.api.RestContext;
+import org.jboss.arquillian.warp.extension.rest.spi.WarpRestCommons;
 
+import javax.servlet.http.HttpServletRequest;
 import java.lang.annotation.Annotation;
 
 /**
  *
  */
 public class RestContextProvider implements ResourceProvider {
+
+    /**
+     * Instance of {@link HttpServletRequest}.
+     */
+    private Instance<HttpServletRequest> httpServletRequestInstance;
 
     /**
      * {@inheritDoc}
@@ -42,7 +50,13 @@ public class RestContextProvider implements ResourceProvider {
      */
     @Override
     public Object lookup(ArquillianResource arquillianResource, Annotation... annotations) {
-        // TODO implement
-        return null;
+
+        // TODO add error handling
+
+        // retrieves the http request
+        HttpServletRequest request = httpServletRequestInstance.get();
+
+        // tries to retrieve the RestContext from the request and return it as a result
+        return (RestContext)request.getAttribute(WarpRestCommons.WARP_REST_ATTRIBUTE);
     }
 }

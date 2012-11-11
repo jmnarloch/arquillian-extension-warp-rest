@@ -15,14 +15,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp.extension.rest.api;
+package org.jboss.arquillian.quickstart.resteasy.service.impl;
+
+import org.junit.Test;
 
 /**
  *
  */
-public interface RestContext {
+public class StockServiceResourceTestCase {
 
-    HttpRequest getRequest();
+    @Test
+    public void testStockCreate() {
 
-    HttpResponse getResponse();
+        // TODO implement
+    }
+
+    @Test
+    public void testStockGet() {
+
+        // TODO implement
+    }
 }

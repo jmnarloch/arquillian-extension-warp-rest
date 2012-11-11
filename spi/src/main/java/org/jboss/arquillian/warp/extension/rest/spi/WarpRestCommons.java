@@ -15,14 +15,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp.extension.rest.api;
+package org.jboss.arquillian.warp.extension.rest.spi;
 
 /**
  *
  */
-public interface RestContext {
+public class WarpRestCommons {
 
-    HttpRequest getRequest();
-
-    HttpResponse getResponse();
+    public static final String WARP_REST_ATTRIBUTE = "org.jboss.arquillian.warp.extension.rest.spi.WARP_REST_ATTRIBUTE";
 }

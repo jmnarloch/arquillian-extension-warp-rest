@@ -166,6 +166,20 @@
             </dependency>
 
             <dependency>
+                <groupId>org.jboss.spec</groupId>
+                <artifactId>jboss-javaee-web-6.0</artifactId>
+                <version>3.0.0.Final</version>
+                <type>pom</type>
+                <scope>provided</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>xalan</groupId>
+                        <artifactId>xalan</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
                 <version>${version.junit}</version>

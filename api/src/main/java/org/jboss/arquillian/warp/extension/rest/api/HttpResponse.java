@@ -20,9 +20,7 @@ package org.jboss.arquillian.warp.extension.rest.api;
 /**
  *
  */
-public interface RestContext {
+public interface HttpResponse {
 
-    HttpRequest getRequest();
-
-    HttpResponse getResponse();
+    Object getEntity();
 }

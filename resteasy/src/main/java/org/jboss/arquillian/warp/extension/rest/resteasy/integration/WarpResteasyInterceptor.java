@@ -17,23 +17,38 @@
  */
 package org.jboss.arquillian.warp.extension.rest.resteasy.integration;
 
+import org.jboss.arquillian.warp.extension.rest.api.RestContext;
+import org.jboss.arquillian.warp.extension.rest.spi.WarpRestCommons;
 import org.jboss.resteasy.annotations.interception.ServerInterceptor;
 import org.jboss.resteasy.core.ResourceMethod;
 import org.jboss.resteasy.core.ServerResponse;
 import org.jboss.resteasy.spi.Failure;
 import org.jboss.resteasy.spi.HttpRequest;
+import org.jboss.resteasy.spi.interception.MessageBodyReaderContext;
+import org.jboss.resteasy.spi.interception.MessageBodyReaderInterceptor;
 import org.jboss.resteasy.spi.interception.PostProcessInterceptor;
 import org.jboss.resteasy.spi.interception.PreProcessInterceptor;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.ext.Provider;
+import java.io.IOException;
 
 /**
  *
  */
 @Provider
 @ServerInterceptor
-public class WarpResteasyInterceptor implements PreProcessInterceptor, PostProcessInterceptor {
+public class WarpResteasyInterceptor implements PreProcessInterceptor, PostProcessInterceptor, MessageBodyReaderInterceptor {
+
+    /**
+     * Stores the  for the current thread.
+     */
+    private final ThreadLocal<HttpRequest> request = new ThreadLocal<HttpRequest>();
+
+    /**
+     * Stores the context builder for the current thread.
+     */
+    private final ThreadLocal<ResteasyContextBuilder> builder = new ThreadLocal<ResteasyContextBuilder>();
 
     /**
      * {@inheritDoc}
@@ -41,9 +56,27 @@ public class WarpResteasyInterceptor implements PreProcessInterceptor, PostProce
     @Override
     public ServerResponse preProcess(HttpRequest httpRequest, ResourceMethod resourceMethod) throws Failure, WebApplicationException {
 
-        // TODO wrap the request and additional data of currently executing context
+        // stores the http request
+        request.set(httpRequest);
 
+        // stores the execution context
+        builder.set(new ResteasyContextBuilder());
+        builder.get().setResourceMethod(resourceMethod);
+
+        // returns null, does not overrides the original server response
         return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Object read(MessageBodyReaderContext context) throws IOException, WebApplicationException {
+
+        // reads the entity from the request
+        Object result = context.proceed();
+        builder.get().setRequestEntity(result);
+        return result;
     }
 
     /**
@@ -52,5 +85,10 @@ public class WarpResteasyInterceptor implements PreProcessInterceptor, PostProce
     @Override
     public void postProcess(ServerResponse serverResponse) {
 
+        // sets the server response
+        RestContext restContext = builder.get().setServerResponse(serverResponse).build();
+
+        // saves the creates context in the request
+        request.get().setAttribute(WarpRestCommons.WARP_REST_ATTRIBUTE, restContext);
     }
 }

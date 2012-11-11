@@ -29,6 +29,6 @@ public class WarpResteasyInterceptorEnricher implements WarpRestInterceptorEnric
     @Override
     public void enrichWebArchive(WebArchive archive) {
 
-        archive.addClass(WarpResteasyInterceptor.class);
+        archive.addPackage(WarpResteasyInterceptor.class.getPackage());
     }
 }

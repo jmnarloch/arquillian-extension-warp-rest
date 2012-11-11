@@ -15,14 +15,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp.extension.rest.api;
+package org.jboss.arquillian.warp.extension.rest.spi;
+
+import org.jboss.arquillian.warp.extension.rest.api.HttpResponse;
 
 /**
  *
  */
-public interface RestContext {
+public class HttpResponseImpl implements HttpResponse {
 
-    HttpRequest getRequest();
+    /**
+     * Represents the response entity.
+     */
+    private Object entity;
 
-    HttpResponse getResponse();
+    /**
+     * Creates new instance of {@link HttpResponseImpl} class.
+     */
+    public HttpResponseImpl() {
+        // empty constructor
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Object getEntity() {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    /**
+     * Sets the response entity.
+     *
+     * @param entity the response entity
+     */
+    public void setEntity(Object entity) {
+        this.entity = entity;
+    }
 }
