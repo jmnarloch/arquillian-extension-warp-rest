@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.quickstart.resteasy.service.impl;
+package org.jboss.arquillian.quickstart.resteasy.service.rs;
 
 import org.jboss.arquillian.quickstart.resteasy.model.Stock;
 import org.jboss.arquillian.quickstart.resteasy.service.StockService;
@@ -33,9 +33,9 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class StockServiceResource implements StockService {
 
-    private final Map<Long, Stock> stockMap = new ConcurrentHashMap<Long, Stock>();
+    private static final Map<Long, Stock> stockMap = new ConcurrentHashMap<Long, Stock>();
 
-    private final AtomicLong counter = new AtomicLong();
+    private static final AtomicLong counter = new AtomicLong();
 
     /**
      * {@inheritDoc}
