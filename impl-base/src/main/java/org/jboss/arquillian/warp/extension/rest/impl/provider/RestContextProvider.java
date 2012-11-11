@@ -18,6 +18,7 @@
 package org.jboss.arquillian.warp.extension.rest.impl.provider;
 
 import org.jboss.arquillian.core.api.Instance;
+import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
 import org.jboss.arquillian.warp.extension.rest.api.RestContext;
@@ -34,7 +35,8 @@ public class RestContextProvider implements ResourceProvider {
     /**
      * Instance of {@link HttpServletRequest}.
      */
-    private Instance<HttpServletRequest> httpServletRequestInstance;
+    @Inject
+    Instance<HttpServletRequest> requestInstance;
 
     /**
      * {@inheritDoc}
@@ -54,9 +56,9 @@ public class RestContextProvider implements ResourceProvider {
         // TODO add error handling
 
         // retrieves the http request
-        HttpServletRequest request = httpServletRequestInstance.get();
+        HttpServletRequest request = requestInstance.get();
 
         // tries to retrieve the RestContext from the request and return it as a result
-        return (RestContext)request.getAttribute(WarpRestCommons.WARP_REST_ATTRIBUTE);
+        return (RestContext) request.getAttribute(WarpRestCommons.WARP_REST_ATTRIBUTE);
     }
 }

@@ -17,15 +17,28 @@
  */
 package org.jboss.arquillian.warp.extension.rest.resteasy.client;
 
+import org.jboss.arquillian.core.spi.LoadableExtension;
 import org.jboss.arquillian.warp.extension.rest.resteasy.integration.WarpResteasyInterceptor;
 import org.jboss.arquillian.warp.extension.rest.spi.WarpRestInterceptorEnricher;
+import org.jboss.arquillian.warp.spi.WarpLifecycleExtension;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 
 /**
  *
  */
-public class WarpResteasyInterceptorEnricher implements WarpRestInterceptorEnricher {
+public class WarpResteasyInterceptorEnricher implements LoadableExtension, WarpRestInterceptorEnricher {
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void register(ExtensionBuilder builder) {
+        builder.service(WarpRestInterceptorEnricher.class, this.getClass());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void enrichWebArchive(WebArchive archive) {
 

@@ -25,6 +25,11 @@ import org.jboss.arquillian.warp.extension.rest.api.HttpResponse;
 public class HttpResponseImpl implements HttpResponse {
 
     /**
+     * Represents the status code.
+     */
+    private int statusCode;
+
+    /**
      * Represents the content type.
      */
     private String contentType;
@@ -39,6 +44,23 @@ public class HttpResponseImpl implements HttpResponse {
      */
     public HttpResponseImpl() {
         // empty constructor
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getStatusCode() {
+        return statusCode;
+    }
+
+    /**
+     * Sets the status code.
+     *
+     * @param statusCode the status code
+     */
+    public void setStatusCode(int statusCode) {
+        this.statusCode = statusCode;
     }
 
     /**

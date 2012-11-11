@@ -22,6 +22,8 @@ package org.jboss.arquillian.warp.extension.rest.api;
  */
 public interface HttpResponse {
 
+    int getStatusCode();
+
     String getContentType();
 
     Object getEntity();

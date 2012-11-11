@@ -20,9 +20,11 @@ package org.jboss.arquillian.warp.extension.rest.impl.client;
 import org.jboss.arquillian.container.test.spi.RemoteLoadableExtension;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
+import org.jboss.arquillian.core.spi.LoadableExtension;
 import org.jboss.arquillian.core.spi.ServiceLoader;
 import org.jboss.arquillian.warp.extension.rest.api.RestContext;
 import org.jboss.arquillian.warp.extension.rest.impl.container.WarpRestRemoteExtension;
+import org.jboss.arquillian.warp.extension.rest.impl.provider.RestContextProvider;
 import org.jboss.arquillian.warp.extension.rest.spi.WarpRestInterceptorEnricher;
 import org.jboss.arquillian.warp.spi.WarpLifecycleExtension;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -34,10 +36,18 @@ import java.util.Collection;
 /**
  *
  */
-public class WarpRestExtension implements WarpLifecycleExtension {
+public class WarpRestExtension implements LoadableExtension, WarpLifecycleExtension {
 
     @Inject
     private Instance<ServiceLoader> serviceLoaderInstance;
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void register(ExtensionBuilder builder) {
+        builder.service(WarpLifecycleExtension.class, this.getClass());
+    }
 
     /**
      * {@inheritDoc}
@@ -55,6 +65,7 @@ public class WarpRestExtension implements WarpLifecycleExtension {
 
         // adds the implementation classes
         archive.addPackage(WarpRestRemoteExtension.class.getPackage());
+        archive.addPackage(RestContextProvider.class.getPackage());
 
         // registers the extension
         archive.addAsServiceProvider(RemoteLoadableExtension.class, WarpRestRemoteExtension.class);

@@ -25,6 +25,13 @@ import org.jboss.arquillian.quickstart.resteasy.application.StockApplication;
 import org.jboss.arquillian.quickstart.resteasy.model.Stock;
 import org.jboss.arquillian.quickstart.resteasy.service.StockService;
 import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.arquillian.warp.ClientAction;
+import org.jboss.arquillian.warp.ServerAssertion;
+import org.jboss.arquillian.warp.Warp;
+import org.jboss.arquillian.warp.WarpTest;
+import org.jboss.arquillian.warp.extension.rest.api.HttpMethod;
+import org.jboss.arquillian.warp.extension.rest.api.RestContext;
+import org.jboss.arquillian.warp.extension.servlet.AfterServlet;
 import org.jboss.resteasy.client.ClientResponse;
 import org.jboss.resteasy.client.ClientResponseFailure;
 import org.jboss.resteasy.client.ProxyFactory;
@@ -38,16 +45,19 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.util.Date;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  *
  */
+@WarpTest
 @RunWith(Arquillian.class)
 public class StockServiceResourceTestCase {
 
@@ -109,7 +119,7 @@ public class StockServiceResourceTestCase {
     public void testStockGet() {
 
         Stock stock = createStock();
-        ClientResponse response = (ClientResponse)stockService.createStock(stock);
+        ClientResponse response = (ClientResponse) stockService.createStock(stock);
         response.releaseConnection();
 
         Stock result = stockService.getStock(1L);
@@ -124,6 +134,43 @@ public class StockServiceResourceTestCase {
     public void testStockGetFailure() {
 
         stockService.getStock(0L);
+    }
+
+    @Test
+    @RunAsClient
+    public void testStockGetWarp() {
+
+        final Stock stock = createStock();
+        ClientResponse response = (ClientResponse) stockService.createStock(stock);
+        response.releaseConnection();
+
+
+        Warp.execute(new ClientAction() {
+            @Override
+            public void action() {
+
+                Stock result = stockService.getStock(1L);
+
+                assertEquals("Stock has invalid name.", stock.getName(), result.getName());
+                assertEquals("Stock has invalid code.", stock.getCode(), result.getCode());
+                assertEquals("Stock has invalid value.", stock.getValue(), result.getValue());
+            }
+        }).verify(new ServerAssertion() {
+
+            private static final long serialVersionUID = 1L;
+
+            @ArquillianResource
+            private RestContext restContext;
+
+            @AfterServlet
+            public void testGetStock() {
+
+                assertEquals(HttpMethod.GET, restContext.getRequest().getMethod());
+                assertEquals(200, restContext.getResponse().getStatusCode());
+                assertEquals("application/xml", restContext.getResponse().getContentType());
+                assertNotNull(restContext.getResponse().getEntity());
+            }
+        });
     }
 
     /**

@@ -26,6 +26,8 @@ import org.jboss.resteasy.spi.Failure;
 import org.jboss.resteasy.spi.HttpRequest;
 import org.jboss.resteasy.spi.interception.MessageBodyReaderContext;
 import org.jboss.resteasy.spi.interception.MessageBodyReaderInterceptor;
+import org.jboss.resteasy.spi.interception.MessageBodyWriterContext;
+import org.jboss.resteasy.spi.interception.MessageBodyWriterInterceptor;
 import org.jboss.resteasy.spi.interception.PostProcessInterceptor;
 import org.jboss.resteasy.spi.interception.PreProcessInterceptor;
 
@@ -38,17 +40,18 @@ import java.io.IOException;
  */
 @Provider
 @ServerInterceptor
-public class WarpResteasyInterceptor implements PreProcessInterceptor, PostProcessInterceptor, MessageBodyReaderInterceptor {
+public class WarpResteasyInterceptor implements PreProcessInterceptor, PostProcessInterceptor,
+        MessageBodyReaderInterceptor, MessageBodyWriterInterceptor {
 
     /**
      * Stores the  for the current thread.
      */
-    private final ThreadLocal<HttpRequest> request = new ThreadLocal<HttpRequest>();
+    private static final ThreadLocal<HttpRequest> request = new ThreadLocal<HttpRequest>();
 
     /**
      * Stores the context builder for the current thread.
      */
-    private final ThreadLocal<ResteasyContextBuilder> builder = new ThreadLocal<ResteasyContextBuilder>();
+    private static final ThreadLocal<ResteasyContextBuilder> builder = new ThreadLocal<ResteasyContextBuilder>();
 
     /**
      * {@inheritDoc}
@@ -61,7 +64,7 @@ public class WarpResteasyInterceptor implements PreProcessInterceptor, PostProce
 
         // stores the execution context
         builder.set(new ResteasyContextBuilder());
-        builder.get().setResourceMethod(resourceMethod);
+        builder.get().setHttpRequest(httpRequest).setResourceMethod(resourceMethod);
 
         // returns null, does not overrides the original server response
         return null;
@@ -86,7 +89,17 @@ public class WarpResteasyInterceptor implements PreProcessInterceptor, PostProce
     public void postProcess(ServerResponse serverResponse) {
 
         // sets the server response
-        RestContext restContext = builder.get().setServerResponse(serverResponse).build();
+        builder.get().setServerResponse(serverResponse);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void write(MessageBodyWriterContext context) throws IOException, WebApplicationException {
+
+        context.proceed();
+        RestContext restContext = builder.get().setResponseMediaType(context.getMediaType()).build();
 
         // saves the creates context in the request
         request.get().setAttribute(WarpRestCommons.WARP_REST_ATTRIBUTE, restContext);
