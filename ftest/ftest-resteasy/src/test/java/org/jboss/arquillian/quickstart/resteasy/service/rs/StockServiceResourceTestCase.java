@@ -40,13 +40,15 @@ import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.jboss.shrinkwrap.resolver.api.DependencyResolvers;
+import org.jboss.shrinkwrap.resolver.api.maven.MavenDependencyResolver;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.io.File;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.util.Date;
@@ -69,9 +71,13 @@ public class StockServiceResourceTestCase {
     @Deployment
     @OverProtocol("Servlet 3.0")
     public static Archive createTestArchive() {
+        File[] libs = DependencyResolvers.use(MavenDependencyResolver.class)
+                .artifacts("org.easytesting:fest-assert:1.4").resolveAsFiles();
+
         return ShrinkWrap.create(WebArchive.class)
                 .addClasses(StockApplication.class, Stock.class, StockService.class, StockServiceResource.class)
-                .addAsWebInfResource("web.xml");
+                .addAsWebInfResource("WEB-INF/web.xml")
+                .addAsLibraries(libs);
     }
 
     /**
@@ -101,7 +107,7 @@ public class StockServiceResourceTestCase {
     @Before
     public void setUp() {
 
-        stockService = ProxyFactory.create(StockService.class, contextPath.toString());
+        stockService = ProxyFactory.create(StockService.class, contextPath + "rest");
     }
 
     @Test
@@ -122,7 +128,7 @@ public class StockServiceResourceTestCase {
         ClientResponse response = (ClientResponse) stockService.createStock(stock);
         response.releaseConnection();
 
-        Stock result = stockService.getStock(1L);
+        Stock result = stockService.getStock(2L);
 
         assertEquals("Stock has invalid name.", stock.getName(), result.getName());
         assertEquals("Stock has invalid code.", stock.getCode(), result.getCode());
@@ -144,12 +150,11 @@ public class StockServiceResourceTestCase {
         ClientResponse response = (ClientResponse) stockService.createStock(stock);
         response.releaseConnection();
 
-
         Warp.execute(new ClientAction() {
             @Override
             public void action() {
 
-                Stock result = stockService.getStock(1L);
+                Stock result = stockService.getStock(2L);
 
                 assertEquals("Stock has invalid name.", stock.getName(), result.getName());
                 assertEquals("Stock has invalid code.", stock.getCode(), result.getCode());
@@ -167,7 +172,7 @@ public class StockServiceResourceTestCase {
 
                 assertEquals(HttpMethod.GET, restContext.getRequest().getMethod());
                 assertEquals(200, restContext.getResponse().getStatusCode());
-                assertEquals("application/xml", restContext.getResponse().getContentType());
+                assertEquals("application/json", restContext.getResponse().getContentType());
                 assertNotNull(restContext.getResponse().getEntity());
             }
         });

@@ -24,19 +24,21 @@
     <properties>
         <!-- Arquillian -->
         <version.arquillian_core>1.0.3.Final</version.arquillian_core>
-        <version.arquillian_drone>1.0.0.Final</version.arquillian_drone>
+        <version.arquillian_drone>1.1.0.CR3</version.arquillian_drone>
         <version.arquillian_warp>1.0.0.Alpha2-SNAPSHOT</version.arquillian_warp>
+
+        <!-- JAX-RS implementations -->
+        <version.resteasy>2.3.4.Final</version.resteasy>
+        <version.jersey>1.15</version.jersey>
+        <version.cxf>2.7.0</version.cxf>
 
         <!-- Tests -->
         <version.junit>4.10</version.junit>
         <version.mockito>1.9.0</version.mockito>
+        <version.fest.assert>1.4</version.fest.assert>
         <version.shrinkwrap_resolver>2.0.0-alpha-1</version.shrinkwrap_resolver>
         <version.jboss_spec>3.0.0.Final</version.jboss_spec>
         <version.org.jboss.jbossas>7.1.1.Final</version.org.jboss.jbossas>
-
-        <version.resteasy>2.3.4.Final</version.resteasy>
-        <version.jersey>1.15</version.jersey>
-        <version.cxf>2.7.0</version.cxf>
 
         <!-- override from parent -->
         <maven.compiler.argument.target>1.5</maven.compiler.argument.target>
@@ -157,6 +159,21 @@
                 <groupId>org.jboss.resteasy</groupId>
                 <artifactId>resteasy-jaxb-provider</artifactId>
                 <version>${version.resteasy}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jboss.resteasy</groupId>
+                <artifactId>resteasy-jackson-provider</artifactId>
+                <version>${version.resteasy}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jboss.resteasy</groupId>
+                <artifactId>resteasy-jsapi</artifactId>
+                <version>${version.resteasy}</version>
+                <scope>test</scope>
             </dependency>
 
             <dependency>
@@ -211,6 +228,13 @@
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-all</artifactId>
                 <version>${version.mockito}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.easytesting</groupId>
+                <artifactId>fest-assert</artifactId>
+                <version>${version.fest.assert}</version>
                 <scope>test</scope>
             </dependency>
 

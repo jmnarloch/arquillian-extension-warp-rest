@@ -23,7 +23,7 @@ import javax.ws.rs.core.Application;
 /**
  *
  */
-@ApplicationPath("/")
+@ApplicationPath("/rest")
 public class StockApplication extends Application {
 
 }

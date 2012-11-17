@@ -21,9 +21,15 @@ import org.jboss.arquillian.quickstart.resteasy.model.Stock;
 import org.jboss.arquillian.quickstart.resteasy.service.StockService;
 
 import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
+import java.math.BigDecimal;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
@@ -33,9 +39,27 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class StockServiceResource implements StockService {
 
+    private static final int MAX_RESULTS = 5;
+
     private static final Map<Long, Stock> stockMap = new ConcurrentHashMap<Long, Stock>();
 
-    private static final AtomicLong counter = new AtomicLong();
+    private static final AtomicLong counter = new AtomicLong(1L);
+
+    /**
+     * Creates new instance of {@link StockServiceResource} class.
+     */
+    public StockServiceResource() {
+
+        // creates test stock
+        Stock stock = new Stock();
+        stock.setId(1L);
+        stock.setName("Acme");
+        stock.setCode("ACM");
+        stock.setValue(new BigDecimal(37.5D));
+        stock.setDate(new Date());
+
+        stockMap.put(stock.getId(), stock);
+    }
 
     /**
      * {@inheritDoc}
@@ -75,6 +99,27 @@ public class StockServiceResource implements StockService {
         }
 
         return stock;
+    }
+
+    @Override
+    public List<Stock> getStocks(int startIndex) {
+
+        // gets the list of all stocks in the current map
+        List<Stock> stocks = new ArrayList<Stock>(MAX_RESULTS);
+
+        Iterator<Stock> iter = stockMap.values().iterator();
+        int count = 1;
+
+        // skips records
+        while(iter.hasNext() && count < startIndex) {
+            iter.next();
+        }
+
+        while (iter.hasNext() && count < MAX_RESULTS) {
+            stocks.add(iter.next());
+        }
+
+        return stocks;
     }
 
     @Override
