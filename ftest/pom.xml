@@ -19,11 +19,6 @@
     <name>Arquillian Warp Rest Extension: Functional Tests</name>
     <description>Functional Tests for Arquillian Warp Rest</description>
 
-    <!-- Properties -->
-    <properties>
-
-    </properties>
-
     <modules>
         <module>ftest-resteasy</module>
         <module>ftest-jersey</module>
@@ -37,6 +32,11 @@
             <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
         </license>
     </licenses>
+
+    <!-- Properties -->
+    <properties>
+
+    </properties>
 
     <!-- Dependencies -->
     <dependencies>

@@ -3,6 +3,8 @@
 .classpath
 .settings/
 
+*.html
+
 # IntelliJ
 *.iml
 *.ipr
