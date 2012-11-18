@@ -64,7 +64,7 @@ public class ResteasyContextBuilder {
     public ResteasyContextBuilder setResponseMediaType(MediaType responseMediaType) {
 
         this.responseMediaType = responseMediaType;
-        return  this;
+        return this;
     }
 
     public ResteasyContextBuilder setServerResponse(ServerResponse serverResponse) {
@@ -100,8 +100,12 @@ public class ResteasyContextBuilder {
 
         HttpResponseImpl response = new HttpResponseImpl();
         response.setContentType(getMediaTypeName(responseMediaType));
-        response.setStatusCode(serverResponse.getStatus());
-        response.setEntity(serverResponse.getEntity());
+
+        if (serverResponse != null) {
+            response.setStatusCode(serverResponse.getStatus());
+            response.setEntity(serverResponse.getEntity());
+        }
+
         return response;
     }
 

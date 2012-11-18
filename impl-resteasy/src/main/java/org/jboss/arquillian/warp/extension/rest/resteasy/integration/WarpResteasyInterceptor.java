@@ -66,6 +66,9 @@ public class WarpResteasyInterceptor implements PreProcessInterceptor, PostProce
         builder.set(new ResteasyContextBuilder());
         builder.get().setHttpRequest(httpRequest).setResourceMethod(resourceMethod);
 
+        // saves the the rest context in the request
+        storeRestContext();
+
         // returns null, does not overrides the original server response
         return null;
     }
@@ -79,6 +82,10 @@ public class WarpResteasyInterceptor implements PreProcessInterceptor, PostProce
         // reads the entity from the request
         Object result = context.proceed();
         builder.get().setRequestEntity(result);
+
+        // saves the creates context in the request
+        storeRestContext();
+
         return result;
     }
 
@@ -90,6 +97,9 @@ public class WarpResteasyInterceptor implements PreProcessInterceptor, PostProce
 
         // sets the server response
         builder.get().setServerResponse(serverResponse);
+
+        // saves the the rest context in the request
+        storeRestContext();
     }
 
     /**
@@ -99,9 +109,18 @@ public class WarpResteasyInterceptor implements PreProcessInterceptor, PostProce
     public void write(MessageBodyWriterContext context) throws IOException, WebApplicationException {
 
         context.proceed();
-        RestContext restContext = builder.get().setResponseMediaType(context.getMediaType()).build();
+        builder.get().setResponseMediaType(context.getMediaType());
 
-        // saves the creates context in the request
+        // saves the the rest context in the request
+        storeRestContext();
+    }
+
+    /**
+     * Stores the rest context in the request as an attribute.
+     */
+    private void storeRestContext() {
+        RestContext restContext = builder.get().build();
+
         request.get().setAttribute(WarpRestCommons.WARP_REST_ATTRIBUTE, restContext);
     }
 }
