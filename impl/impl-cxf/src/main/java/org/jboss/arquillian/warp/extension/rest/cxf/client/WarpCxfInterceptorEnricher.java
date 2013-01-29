@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2012 Red Hat Inc. and/or its affiliates and other contributors
+ * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @authors tag. All rights reserved.
  * See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -15,19 +15,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp.extension.rest.spi;
+package org.jboss.arquillian.warp.extension.rest.cxf.client;
 
+import org.jboss.arquillian.core.spi.LoadableExtension;
+import org.jboss.arquillian.warp.extension.rest.spi.WarpRestInterceptorEnricher;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 
 /**
  *
  */
-public interface WarpRestInterceptorEnricher {
+public class WarpCxfInterceptorEnricher implements LoadableExtension, WarpRestInterceptorEnricher {
 
     /**
-     * Enriches the web archive by providing JAX-RS interceptor that will intercept execution context.
-     *
-     * @param archive the web archive to enrich
+     * {@inheritDoc}
      */
-    void enrichWebArchive(WebArchive archive);
+    @Override
+    public void register(ExtensionBuilder builder) {
+
+        builder.service(WarpRestInterceptorEnricher.class, this.getClass());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void enrichWebArchive(WebArchive archive) {
+
+        archive.addPackage(WarpCxfInterceptorEnricher.class.getPackage());
+    }
 }

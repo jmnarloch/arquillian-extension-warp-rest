@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2012 Red Hat Inc. and/or its affiliates and other contributors
+ * Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @authors tag. All rights reserved.
  * See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -17,17 +17,12 @@
  */
 package org.jboss.arquillian.warp.extension.rest.spi;
 
-import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.jboss.arquillian.warp.extension.rest.api.RestContext;
 
 /**
  *
  */
-public interface WarpRestInterceptorEnricher {
+public interface RestContextBuilder {
 
-    /**
-     * Enriches the web archive by providing JAX-RS interceptor that will intercept execution context.
-     *
-     * @param archive the web archive to enrich
-     */
-    void enrichWebArchive(WebArchive archive);
+    RestContext build();
 }

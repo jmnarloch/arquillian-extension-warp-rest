@@ -15,8 +15,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp.extension.rest.resteasy.integration;
+package org.jboss.arquillian.warp.extension.rest.jersey.integration;
 
+import com.sun.jersey.spi.container.ContainerRequest;
+import com.sun.jersey.spi.container.ContainerResponse;
 import org.jboss.arquillian.warp.extension.rest.api.HttpMethod;
 import org.jboss.arquillian.warp.extension.rest.api.HttpRequest;
 import org.jboss.arquillian.warp.extension.rest.api.HttpResponse;
@@ -25,58 +27,32 @@ import org.jboss.arquillian.warp.extension.rest.spi.HttpRequestImpl;
 import org.jboss.arquillian.warp.extension.rest.spi.HttpResponseImpl;
 import org.jboss.arquillian.warp.extension.rest.spi.RestContextBuilder;
 import org.jboss.arquillian.warp.extension.rest.spi.RestContextImpl;
-import org.jboss.resteasy.core.ResourceMethod;
-import org.jboss.resteasy.core.ServerResponse;
 
 import javax.ws.rs.core.MediaType;
 
 /**
  *
  */
-public class ResteasyContextBuilder implements RestContextBuilder {
+public class JerseyContextBuilder implements RestContextBuilder {
 
-    private org.jboss.resteasy.spi.HttpRequest httpRequest;
+    private ContainerRequest containerRequest;
 
-    private ResourceMethod resourceMethod;
+    private ContainerResponse containerResponse;
 
-    private Object requestEntity;
-
-    private MediaType responseMediaType;
-
-    private ServerResponse serverResponse;
-
-    public ResteasyContextBuilder() {
+    public JerseyContextBuilder() {
 
         // empty constructor
     }
 
-    public ResteasyContextBuilder setHttpRequest(org.jboss.resteasy.spi.HttpRequest httpRequest) {
+    public JerseyContextBuilder setContainerRequest(ContainerRequest containerRequest) {
 
-        this.httpRequest = httpRequest;
+        this.containerRequest = containerRequest;
         return this;
     }
 
-    public ResteasyContextBuilder setResourceMethod(ResourceMethod resourceMethod) {
+    public JerseyContextBuilder setContainerResponse(ContainerResponse containerResponse) {
 
-        this.resourceMethod = resourceMethod;
-        return this;
-    }
-
-    public ResteasyContextBuilder setResponseMediaType(MediaType responseMediaType) {
-
-        this.responseMediaType = responseMediaType;
-        return this;
-    }
-
-    public ResteasyContextBuilder setServerResponse(ServerResponse serverResponse) {
-
-        this.serverResponse = serverResponse;
-        return this;
-    }
-
-    public ResteasyContextBuilder setRequestEntity(Object entity) {
-
-        this.requestEntity = entity;
+        this.containerResponse = containerResponse;
         return this;
     }
 
@@ -91,26 +67,27 @@ public class ResteasyContextBuilder implements RestContextBuilder {
     private HttpRequest buildHttpRequest() {
 
         HttpRequestImpl request = new HttpRequestImpl();
-        request.setContentType(getMediaTypeName(httpRequest.getHttpHeaders().getMediaType()));
-        request.setEntity(this.requestEntity);
-        request.setHttpMethod(getHttpMethod(httpRequest.getHttpMethod()));
+        request.setContentType(getMediaTypeName(containerRequest.getMediaType()));
+        // TODO this likely won't work
+        request.setEntity(containerRequest.getEntity(Object.class));
+        request.setHttpMethod(getHttpMethod(containerRequest.getMethod()));
         return request;
     }
 
     private HttpResponse buildHttpResponse() {
 
         HttpResponseImpl response = new HttpResponseImpl();
-        response.setContentType(getMediaTypeName(responseMediaType));
 
-        if (serverResponse != null) {
-            response.setStatusCode(serverResponse.getStatus());
-            response.setEntity(serverResponse.getEntity());
+        if (containerResponse != null) {
+            response.setContentType(getMediaTypeName(containerResponse.getMediaType()));
+            response.setStatusCode(containerResponse.getStatus());
+            response.setEntity(containerResponse.getEntity());
         }
 
         return response;
     }
 
-    private static String getMediaTypeName(MediaType mediaType) {
+    private String getMediaTypeName(MediaType mediaType) {
         return mediaType != null ? mediaType.toString() : null;
     }
 

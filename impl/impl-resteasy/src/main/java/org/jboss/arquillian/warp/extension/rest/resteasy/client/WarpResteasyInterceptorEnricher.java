@@ -33,6 +33,7 @@ public class WarpResteasyInterceptorEnricher implements LoadableExtension, WarpR
      */
     @Override
     public void register(ExtensionBuilder builder) {
+
         builder.service(WarpRestInterceptorEnricher.class, this.getClass());
     }
 

@@ -21,6 +21,7 @@ import org.jboss.arquillian.quickstart.resteasy.model.Stock;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -52,7 +53,7 @@ public interface StockService {
     Stock getStock(@PathParam("id") long id);
 
     @GET
-    List<Stock> getStocks(@QueryParam("startIndex") int startIndex);
+    List<Stock> getStocks(@DefaultValue("0") @QueryParam("startIndex") int startIndex, @DefaultValue("10") @QueryParam("size") int size);
 
     @Path("/{id}")
     @DELETE

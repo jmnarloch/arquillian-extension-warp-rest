@@ -102,16 +102,16 @@ public class StockServiceResource implements StockService {
     }
 
     @Override
-    public List<Stock> getStocks(int startIndex) {
+    public List<Stock> getStocks(int startIndex, int size)  {
 
         // gets the list of all stocks in the current map
         List<Stock> stocks = new ArrayList<Stock>(MAX_RESULTS);
 
         Iterator<Stock> iter = stockMap.values().iterator();
-        int count = 1;
+        int count = 0;
 
         // skips records
-        while(iter.hasNext() && count < startIndex) {
+        while(iter.hasNext() && count <= startIndex) {
             iter.next();
         }
 

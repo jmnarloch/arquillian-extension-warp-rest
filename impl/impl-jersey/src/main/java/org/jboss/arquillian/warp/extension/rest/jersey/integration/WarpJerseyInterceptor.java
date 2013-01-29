@@ -21,6 +21,10 @@ import com.sun.jersey.spi.container.ContainerRequest;
 import com.sun.jersey.spi.container.ContainerRequestFilter;
 import com.sun.jersey.spi.container.ContainerResponse;
 import com.sun.jersey.spi.container.ContainerResponseFilter;
+import org.jboss.arquillian.warp.extension.rest.api.RestContext;
+import org.jboss.arquillian.warp.extension.rest.spi.WarpRestCommons;
+
+import java.util.Map;
 
 /**
  *
@@ -28,11 +32,22 @@ import com.sun.jersey.spi.container.ContainerResponseFilter;
 public class WarpJerseyInterceptor implements ContainerRequestFilter, ContainerResponseFilter {
 
     /**
+     * Stores the context builder for the current thread.
+     */
+    private static final ThreadLocal<JerseyContextBuilder> builder = new ThreadLocal<JerseyContextBuilder>();
+
+    /**
      * {@inheritDoc}
      */
     @Override
     public ContainerRequest filter(ContainerRequest containerRequest) {
-        return null;
+
+        builder.set(new JerseyContextBuilder());
+        builder.get().setContainerRequest(containerRequest);
+
+        storeRestContext(containerRequest.getProperties());
+
+        return containerRequest;
     }
 
     /**
@@ -40,6 +55,21 @@ public class WarpJerseyInterceptor implements ContainerRequestFilter, ContainerR
      */
     @Override
     public ContainerResponse filter(ContainerRequest containerRequest, ContainerResponse containerResponse) {
-        return null;
+
+        builder.get().setContainerResponse(containerResponse);
+        storeRestContext(containerRequest.getProperties());
+
+        return containerResponse;
+    }
+
+    /**
+     * Stores the rest context in the request as an attribute.
+     *
+     * @param properties
+     */
+    private void storeRestContext(Map<String, Object> properties) {
+        RestContext restContext = builder.get().build();
+
+        properties.put(WarpRestCommons.WARP_REST_ATTRIBUTE, restContext);
     }
 }

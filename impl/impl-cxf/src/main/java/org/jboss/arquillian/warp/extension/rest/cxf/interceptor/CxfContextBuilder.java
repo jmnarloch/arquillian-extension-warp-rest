@@ -15,8 +15,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp.extension.rest.resteasy.integration;
+package org.jboss.arquillian.warp.extension.rest.cxf.interceptor;
 
+import org.apache.cxf.message.Message;
 import org.jboss.arquillian.warp.extension.rest.api.HttpMethod;
 import org.jboss.arquillian.warp.extension.rest.api.HttpRequest;
 import org.jboss.arquillian.warp.extension.rest.api.HttpResponse;
@@ -25,58 +26,35 @@ import org.jboss.arquillian.warp.extension.rest.spi.HttpRequestImpl;
 import org.jboss.arquillian.warp.extension.rest.spi.HttpResponseImpl;
 import org.jboss.arquillian.warp.extension.rest.spi.RestContextBuilder;
 import org.jboss.arquillian.warp.extension.rest.spi.RestContextImpl;
-import org.jboss.resteasy.core.ResourceMethod;
-import org.jboss.resteasy.core.ServerResponse;
 
-import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 /**
  *
  */
-public class ResteasyContextBuilder implements RestContextBuilder {
+public class CxfContextBuilder implements RestContextBuilder {
 
-    private org.jboss.resteasy.spi.HttpRequest httpRequest;
+    private Message requestMessage;
 
-    private ResourceMethod resourceMethod;
+    private Message responseMessage;
 
-    private Object requestEntity;
+    private Response response;
 
-    private MediaType responseMediaType;
+    public CxfContextBuilder setRequestMessage(Message requestMessage) {
 
-    private ServerResponse serverResponse;
-
-    public ResteasyContextBuilder() {
-
-        // empty constructor
-    }
-
-    public ResteasyContextBuilder setHttpRequest(org.jboss.resteasy.spi.HttpRequest httpRequest) {
-
-        this.httpRequest = httpRequest;
+        this.requestMessage = requestMessage;
         return this;
     }
 
-    public ResteasyContextBuilder setResourceMethod(ResourceMethod resourceMethod) {
+    public CxfContextBuilder setResponseMessage(Message responseMessage) {
 
-        this.resourceMethod = resourceMethod;
+        this.responseMessage = responseMessage;
         return this;
     }
 
-    public ResteasyContextBuilder setResponseMediaType(MediaType responseMediaType) {
+    public CxfContextBuilder setResponse(Response response) {
 
-        this.responseMediaType = responseMediaType;
-        return this;
-    }
-
-    public ResteasyContextBuilder setServerResponse(ServerResponse serverResponse) {
-
-        this.serverResponse = serverResponse;
-        return this;
-    }
-
-    public ResteasyContextBuilder setRequestEntity(Object entity) {
-
-        this.requestEntity = entity;
+        this.response = response;
         return this;
     }
 
@@ -91,31 +69,31 @@ public class ResteasyContextBuilder implements RestContextBuilder {
     private HttpRequest buildHttpRequest() {
 
         HttpRequestImpl request = new HttpRequestImpl();
-        request.setContentType(getMediaTypeName(httpRequest.getHttpHeaders().getMediaType()));
-        request.setEntity(this.requestEntity);
-        request.setHttpMethod(getHttpMethod(httpRequest.getHttpMethod()));
+        request.setContentType((String) requestMessage.get(Message.CONTENT_TYPE));
+        request.setEntity(getRequestEntity());
+        request.setHttpMethod(getRequestMethod((String) requestMessage.get(Message.HTTP_REQUEST_METHOD)));
         return request;
     }
 
     private HttpResponse buildHttpResponse() {
 
         HttpResponseImpl response = new HttpResponseImpl();
-        response.setContentType(getMediaTypeName(responseMediaType));
 
-        if (serverResponse != null) {
-            response.setStatusCode(serverResponse.getStatus());
-            response.setEntity(serverResponse.getEntity());
+        if (responseMessage != null) {
+            response.setContentType(this.response.getMediaType().toString());
+            response.setStatusCode(this.response.getStatus());
+            response.setEntity(this.response.getEntity());
         }
 
         return response;
     }
 
-    private static String getMediaTypeName(MediaType mediaType) {
-        return mediaType != null ? mediaType.toString() : null;
+    public Object getRequestEntity() {
+        return requestMessage.getContentFormats().size() > 0 ?
+                requestMessage.getContent(requestMessage.getContentFormats().iterator().next()) : null;
     }
 
-    private static HttpMethod getHttpMethod(String methodName) {
-
+    private HttpMethod getRequestMethod(String methodName) {
         return Enum.valueOf(HttpMethod.class, methodName.toUpperCase());
     }
 }
