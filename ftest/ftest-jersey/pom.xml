@@ -33,7 +33,54 @@
 
     <!-- Dependencies -->
     <dependencies>
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-server</artifactId>
+        </dependency>
 
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-servlet</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-json</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.sun.jersey.contribs</groupId>
+            <artifactId>jersey-multipart</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-client</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.arquillian.extension</groupId>
+            <artifactId>arquillian-warp-impl</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.arquillian.extension</groupId>
+            <artifactId>arquillian-warp-rest-impl-jersey</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.arquillian.extension</groupId>
+            <artifactId>arquillian-drone-webdriver-depchain</artifactId>
+            <type>pom</type>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.easytesting</groupId>
+            <artifactId>fest-assert</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
 </project>

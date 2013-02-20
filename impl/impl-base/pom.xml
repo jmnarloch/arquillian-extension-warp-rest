@@ -5,7 +5,7 @@
     <!-- Parent -->
     <parent>
         <groupId>org.jboss.arquillian.extension</groupId>
-        <artifactId>arquillian-warp-rest-parent</artifactId>
+        <artifactId>arquillian-warp-rest-impl-parent</artifactId>
         <version>1.0.0.Final-SNAPSHOT</version>
     </parent>
 

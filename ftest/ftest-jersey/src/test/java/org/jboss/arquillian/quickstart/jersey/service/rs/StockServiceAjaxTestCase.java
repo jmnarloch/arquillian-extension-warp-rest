@@ -1,20 +1,18 @@
-package org.jboss.arquillian.quickstart.resteasy.service.rs;
+package org.jboss.arquillian.quickstart.jersey.service.rs;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.OverProtocol;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.arquillian.quickstart.resteasy.application.StockApplication;
-import org.jboss.arquillian.quickstart.resteasy.model.Stock;
-import org.jboss.arquillian.quickstart.resteasy.service.StockService;
+import org.jboss.arquillian.quickstart.jersey.application.StockApplication;
+import org.jboss.arquillian.quickstart.jersey.model.Stock;
+import org.jboss.arquillian.quickstart.jersey.service.StockService;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.arquillian.warp.Activity;
 import org.jboss.arquillian.warp.Inspection;
 import org.jboss.arquillian.warp.Warp;
 import org.jboss.arquillian.warp.WarpTest;
-import org.jboss.arquillian.warp.client.filter.RequestFilter;
-import org.jboss.arquillian.warp.client.filter.http.HttpRequest;
 import org.jboss.arquillian.warp.extension.rest.api.HttpMethod;
 import org.jboss.arquillian.warp.extension.rest.api.RestContext;
 import org.jboss.arquillian.warp.servlet.AfterServlet;
@@ -52,7 +50,14 @@ public class StockServiceAjaxTestCase {
     @OverProtocol("Servlet 3.0")
     public static Archive createTestArchive() {
         File[] libs = DependencyResolvers.use(MavenDependencyResolver.class)
-                .artifacts("org.easytesting:fest-assert:1.4").resolveAsFiles();
+                .loadMetadataFromPom("pom.xml")
+                .artifacts("org.easytesting:fest-assert")
+                .artifacts("com.sun.jersey:jersey-json")
+                .artifacts("com.sun.jersey:jersey-client")
+                .artifacts("com.sun.jersey:jersey-server")
+                .artifacts("com.sun.jersey:jersey-servlet")
+                .exclusion("javax.servlet:*")
+                .resolveAsFiles();
 
         return ShrinkWrap.create(WebArchive.class)
                 .addClasses(StockApplication.class, Stock.class, StockService.class, StockServiceResource.class)
@@ -140,4 +145,3 @@ public class StockServiceAjaxTestCase {
         });
     }
 }
-

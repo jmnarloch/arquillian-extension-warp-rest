@@ -69,7 +69,7 @@ public class JerseyContextBuilder implements RestContextBuilder {
         HttpRequestImpl request = new HttpRequestImpl();
         request.setContentType(getMediaTypeName(containerRequest.getMediaType()));
         // TODO this likely won't work
-        request.setEntity(containerRequest.getEntity(Object.class));
+        // request.setEntity(containerRequest.getEntity(Object.class));
         request.setHttpMethod(getHttpMethod(containerRequest.getMethod()));
         return request;
     }

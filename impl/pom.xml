@@ -13,7 +13,7 @@
     <modelVersion>4.0.0</modelVersion>
 
 
-    <artifactId>arquillian-warp-impl-parent</artifactId>
+    <artifactId>arquillian-warp-rest-impl-parent</artifactId>
     <packaging>pom</packaging>
 
     <name>Arquillian Warp Rest Extension: Implementation</name>

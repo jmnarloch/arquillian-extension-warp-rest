@@ -25,11 +25,11 @@
         <!-- Arquillian -->
         <version.arquillian_core>1.0.3.Final</version.arquillian_core>
         <version.arquillian_drone>1.1.0.CR3</version.arquillian_drone>
-        <version.arquillian_warp>1.0.0.Alpha2-SNAPSHOT</version.arquillian_warp>
+        <version.arquillian_warp>1.0.0.Alpha2</version.arquillian_warp>
 
         <!-- JAX-RS implementations -->
         <version.resteasy>2.3.4.Final</version.resteasy>
-        <version.jersey>1.15</version.jersey>
+        <version.jersey>1.17</version.jersey>
         <version.cxf>2.7.0</version.cxf>
 
         <!-- Tests -->
@@ -39,6 +39,7 @@
         <version.shrinkwrap_resolver>2.0.0-alpha-1</version.shrinkwrap_resolver>
         <version.jboss_spec>3.0.0.Final</version.jboss_spec>
         <version.org.jboss.jbossas>7.1.1.Final</version.org.jboss.jbossas>
+        <version.org.glassfish>3.1.2</version.org.glassfish>
 
         <!-- override from parent -->
         <maven.compiler.argument.target>1.5</maven.compiler.argument.target>
@@ -180,6 +181,40 @@
             </dependency>
 
             <dependency>
+                <groupId>com.sun.jersey</groupId>
+                <artifactId>jersey-servlet</artifactId>
+                <version>${version.jersey}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>javax.servlet</groupId>
+                        <artifactId>javax.servlet-api</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>javax.servlet</groupId>
+                        <artifactId>jsp-api</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <dependency>
+                <groupId>com.sun.jersey</groupId>
+                <artifactId>jersey-json</artifactId>
+                <version>${version.jersey}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.sun.jersey.contribs</groupId>
+                <artifactId>jersey-multipart</artifactId>
+                <version>${version.jersey}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.sun.jersey</groupId>
+                <artifactId>jersey-client</artifactId>
+                <version>${version.jersey}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-rt-frontend-jaxrs</artifactId>
                 <version>${version.cxf}</version>
@@ -233,6 +268,34 @@
                 <artifactId>fest-assert</artifactId>
                 <version>${version.fest.assert}</version>
                 <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jboss.arquillian.container</groupId>
+                <artifactId>arquillian-glassfish-embedded-3.1</artifactId>
+                <version>1.0.0.CR3</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jboss.arquillian.container</groupId>
+                <artifactId>arquillian-glassfish-remote-3.1</artifactId>
+                <version>1.0.0.CR3</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.glassfish.main.extras</groupId>
+                <artifactId>glassfish-embedded-all</artifactId>
+                <version>${version.org.glassfish}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>javax</groupId>
+                <artifactId>javaee-api</artifactId>
+                <version>6.0</version>
+                <scope>provided</scope>
             </dependency>
 
         </dependencies>

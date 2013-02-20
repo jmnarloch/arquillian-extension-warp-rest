@@ -20,7 +20,6 @@ package org.jboss.arquillian.warp.extension.rest.resteasy.client;
 import org.jboss.arquillian.core.spi.LoadableExtension;
 import org.jboss.arquillian.warp.extension.rest.resteasy.integration.WarpResteasyInterceptor;
 import org.jboss.arquillian.warp.extension.rest.spi.WarpRestInterceptorEnricher;
-import org.jboss.arquillian.warp.spi.WarpLifecycleExtension;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 
 /**

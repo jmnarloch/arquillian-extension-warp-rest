@@ -15,33 +15,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp.extension.rest.jersey.client;
+package org.jboss.arquillian.quickstart.jersey.application;
 
-import org.jboss.arquillian.core.spi.LoadableExtension;
+import org.jboss.arquillian.quickstart.jersey.service.rs.StockServiceResource;
 import org.jboss.arquillian.warp.extension.rest.jersey.integration.WarpJerseyInterceptor;
-import org.jboss.arquillian.warp.extension.rest.spi.WarpRestInterceptorEnricher;
-import org.jboss.shrinkwrap.api.spec.WebArchive;
+
+import javax.ws.rs.ApplicationPath;
+import javax.ws.rs.core.Application;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  *
  */
-public class WarpJerseyInterceptorEnricher implements LoadableExtension, WarpRestInterceptorEnricher {
+@ApplicationPath("/")
+public class StockApplication extends Application {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void register(ExtensionBuilder builder) {
+    public Set<Object> getSingletons() {
 
-        builder.service(WarpRestInterceptorEnricher.class, this.getClass());
+        Set<Object> singletons = new HashSet<Object>();
+        singletons.add(new StockServiceResource());
+        return singletons;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public void enrichWebArchive(WebArchive archive) {
+    public Set<Class<?>> getClasses() {
 
-        archive.addPackage(WarpJerseyInterceptor.class.getPackage());
+        Set<Class<?>> classes = new HashSet<Class<?>>();
+        classes.add(WarpJerseyInterceptor.class);
+        return classes;
     }
 }

@@ -15,15 +15,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.quickstart.resteasy.service.rs;
+package org.jboss.arquillian.quickstart.jersey.service.rs;
 
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.api.client.config.ClientConfig;
+import com.sun.jersey.api.client.config.DefaultClientConfig;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.OverProtocol;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.arquillian.quickstart.resteasy.application.StockApplication;
-import org.jboss.arquillian.quickstart.resteasy.model.Stock;
-import org.jboss.arquillian.quickstart.resteasy.service.StockService;
+import org.jboss.arquillian.quickstart.jersey.application.StockApplication;
+import org.jboss.arquillian.quickstart.jersey.model.Stock;
+import org.jboss.arquillian.quickstart.jersey.service.StockService;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.arquillian.warp.Activity;
 import org.jboss.arquillian.warp.Inspection;
@@ -32,21 +37,16 @@ import org.jboss.arquillian.warp.WarpTest;
 import org.jboss.arquillian.warp.extension.rest.api.HttpMethod;
 import org.jboss.arquillian.warp.extension.rest.api.RestContext;
 import org.jboss.arquillian.warp.servlet.AfterServlet;
-import org.jboss.resteasy.client.ClientResponse;
-import org.jboss.resteasy.client.ClientResponseFailure;
-import org.jboss.resteasy.client.ProxyFactory;
-import org.jboss.resteasy.plugins.providers.RegisterBuiltin;
-import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.DependencyResolvers;
 import org.jboss.shrinkwrap.resolver.api.maven.MavenDependencyResolver;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.File;
 import java.math.BigDecimal;
@@ -71,8 +71,16 @@ public class StockServiceResourceTestCase {
     @Deployment
     @OverProtocol("Servlet 3.0")
     public static Archive createTestArchive() {
+
         File[] libs = DependencyResolvers.use(MavenDependencyResolver.class)
-                .artifacts("org.easytesting:fest-assert:1.4").resolveAsFiles();
+                .loadMetadataFromPom("pom.xml")
+                .artifacts("org.easytesting:fest-assert")
+                .artifacts("com.sun.jersey:jersey-json")
+                .artifacts("com.sun.jersey:jersey-client")
+                .artifacts("com.sun.jersey:jersey-server")
+                .artifacts("com.sun.jersey:jersey-servlet")
+                .exclusion("javax.servlet:*")
+                .resolveAsFiles();
 
         return ShrinkWrap.create(WebArchive.class)
                 .addClasses(StockApplication.class, Stock.class, StockService.class, StockServiceResource.class)
@@ -87,35 +95,29 @@ public class StockServiceResourceTestCase {
     private URL contextPath;
 
     /**
-     * The service client.
+     * Represents the REST service client.
      */
-    private StockService stockService;
+    private Client client;
 
     /**
-     * Sets up the test environment.
-     */
-    @BeforeClass
-    public static void setUpClass() {
-
-        // initializes the rest easy client framework
-        RegisterBuiltin.register(ResteasyProviderFactory.getInstance());
-    }
-
-    /**
-     * Sets up class.
+     * <p>Sets up the test environment.</p>
      */
     @Before
     public void setUp() {
 
-        stockService = ProxyFactory.create(StockService.class, contextPath + "rest");
+        client = Client.create(new DefaultClientConfig());
     }
 
     @Test
     @RunAsClient
     public void testStockCreate() {
 
-        // creates the stock
-        Response response = stockService.createStock(createStock());
+        WebResource webResource = client.resource(contextPath + "rest/stocks");
+
+        ClientResponse response = webResource
+                .accept(MediaType.APPLICATION_XML_TYPE)
+                .type(MediaType.APPLICATION_XML_TYPE)
+                .post(ClientResponse.class, createStock());
 
         assertEquals("The request didn't succeeded.", Response.Status.CREATED.getStatusCode(), response.getStatus());
     }
@@ -125,21 +127,21 @@ public class StockServiceResourceTestCase {
     public void testStockGet() {
 
         Stock stock = createStock();
-        ClientResponse response = (ClientResponse) stockService.createStock(stock);
-        response.releaseConnection();
 
-        Stock result = stockService.getStock(2L);
+        client.resource(contextPath + "rest/stocks")
+                .accept(MediaType.APPLICATION_XML_TYPE)
+                .type(MediaType.APPLICATION_XML_TYPE)
+                .post(ClientResponse.class, stock);
+
+        WebResource webResource = client.resource(contextPath + "rest/stocks/2");
+
+        Stock result = webResource
+                .accept(MediaType.APPLICATION_XML_TYPE)
+                .get(Stock.class);
 
         assertEquals("Stock has invalid name.", stock.getName(), result.getName());
         assertEquals("Stock has invalid code.", stock.getCode(), result.getCode());
         assertEquals("Stock has invalid value.", stock.getValue(), result.getValue());
-    }
-
-    @Test(expected = ClientResponseFailure.class)
-    @RunAsClient
-    public void testStockGetFailure() {
-
-        stockService.getStock(0L);
     }
 
     @Test
@@ -147,14 +149,21 @@ public class StockServiceResourceTestCase {
     public void testStockGetWarp() {
 
         final Stock stock = createStock();
-        ClientResponse response = (ClientResponse) stockService.createStock(stock);
-        response.releaseConnection();
+
+        client.resource(contextPath + "rest/stocks")
+                .accept(MediaType.APPLICATION_XML_TYPE)
+                .type(MediaType.APPLICATION_XML_TYPE)
+                .post(ClientResponse.class, stock);
 
         Warp.initiate(new Activity() {
             @Override
             public void perform() {
 
-                Stock result = stockService.getStock(2L);
+                WebResource webResource = client.resource(contextPath + "rest/stocks/2");
+
+                Stock result = webResource
+                        .accept(MediaType.APPLICATION_XML_TYPE)
+                        .get(Stock.class);
 
                 assertEquals("Stock has invalid name.", stock.getName(), result.getName());
                 assertEquals("Stock has invalid code.", stock.getCode(), result.getCode());
@@ -172,8 +181,7 @@ public class StockServiceResourceTestCase {
 
                 assertEquals(HttpMethod.GET, restContext.getRequest().getMethod());
                 assertEquals(200, restContext.getResponse().getStatusCode());
-                assertEquals("application/json", restContext.getResponse().getContentType());
-                assertNotNull(restContext.getResponse().getEntity());
+                assertEquals("application/xml", restContext.getResponse().getContentType());
             }
         });
     }

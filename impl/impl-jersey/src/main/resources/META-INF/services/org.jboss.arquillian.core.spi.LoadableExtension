@@ -1,0 +1,1 @@
+org.jboss.arquillian.warp.extension.rest.jersey.client.WarpJerseyInterceptorEnricher

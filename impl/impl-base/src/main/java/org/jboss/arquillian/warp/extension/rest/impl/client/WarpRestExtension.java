@@ -26,7 +26,7 @@ import org.jboss.arquillian.warp.extension.rest.api.RestContext;
 import org.jboss.arquillian.warp.extension.rest.impl.container.WarpRestRemoteExtension;
 import org.jboss.arquillian.warp.extension.rest.impl.provider.RestContextProvider;
 import org.jboss.arquillian.warp.extension.rest.spi.WarpRestInterceptorEnricher;
-import org.jboss.arquillian.warp.spi.WarpLifecycleExtension;
+import org.jboss.arquillian.warp.spi.WarpDeploymentEnrichmentExtension;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -36,7 +36,7 @@ import java.util.Collection;
 /**
  *
  */
-public class WarpRestExtension implements LoadableExtension, WarpLifecycleExtension {
+public class WarpRestExtension implements LoadableExtension, WarpDeploymentEnrichmentExtension {
 
     @Inject
     private Instance<ServiceLoader> serviceLoaderInstance;
@@ -46,7 +46,8 @@ public class WarpRestExtension implements LoadableExtension, WarpLifecycleExtens
      */
     @Override
     public void register(ExtensionBuilder builder) {
-        builder.service(WarpLifecycleExtension.class, this.getClass());
+
+        builder.service(WarpDeploymentEnrichmentExtension.class, this.getClass());
     }
 
     /**

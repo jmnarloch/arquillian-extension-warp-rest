@@ -15,29 +15,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.quickstart.resteasy.service.rs;
+package org.jboss.arquillian.quickstart.jersey.service.rs;
 
-import org.jboss.arquillian.quickstart.resteasy.model.Stock;
-import org.jboss.arquillian.quickstart.resteasy.service.StockService;
+import org.jboss.arquillian.quickstart.jersey.model.Stock;
+import org.jboss.arquillian.quickstart.jersey.service.StockService;
 
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.math.BigDecimal;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
  *
  */
+@Path("/stocks")
+@Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+@Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 public class StockServiceResource implements StockService {
 
     private static final int MAX_RESULTS = 5;
@@ -65,6 +71,7 @@ public class StockServiceResource implements StockService {
     /**
      * {@inheritDoc}
      */
+    @POST
     @Override
     public Response createStock(Stock stock) {
 
@@ -76,6 +83,8 @@ public class StockServiceResource implements StockService {
         return Response.created(URI.create("/stocks/" + stock.getId())).build();
     }
 
+    @Path("/{id}")
+    @PUT
     @Override
     public void updateStock(@PathParam("id") long id, Stock stock) {
 
@@ -91,6 +100,8 @@ public class StockServiceResource implements StockService {
         current.setValue(stock.getValue());
     }
 
+    @Path("/{id}")
+    @GET
     @Override
     public Stock getStock(@PathParam("id") long id) {
 
@@ -102,8 +113,9 @@ public class StockServiceResource implements StockService {
         return stock;
     }
 
+    @GET
     @Override
-    public List<Stock> getStocks(@DefaultValue("0")int startIndex, @DefaultValue("10")int size)  {
+    public List<Stock> getStocks(@DefaultValue("0") int startIndex, @DefaultValue("10") int size) {
 
         // gets the list of all stocks in the current map
         List<Stock> stocks = new ArrayList<Stock>(MAX_RESULTS);
@@ -112,7 +124,7 @@ public class StockServiceResource implements StockService {
         int count = 0;
 
         // skips records
-        while(iter.hasNext() && count < startIndex) {
+        while (iter.hasNext() && count < startIndex) {
             iter.next();
         }
 
@@ -123,6 +135,8 @@ public class StockServiceResource implements StockService {
         return stocks;
     }
 
+    @Path("/{id}")
+    @DELETE
     @Override
     public Response deleteStock(@PathParam("id") long id) {
 

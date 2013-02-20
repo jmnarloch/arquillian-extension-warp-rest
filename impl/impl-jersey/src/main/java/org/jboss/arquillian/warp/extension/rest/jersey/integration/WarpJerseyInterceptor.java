@@ -24,12 +24,22 @@ import com.sun.jersey.spi.container.ContainerResponseFilter;
 import org.jboss.arquillian.warp.extension.rest.api.RestContext;
 import org.jboss.arquillian.warp.extension.rest.spi.WarpRestCommons;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.ext.Provider;
 import java.util.Map;
 
 /**
  *
  */
+@Provider
 public class WarpJerseyInterceptor implements ContainerRequestFilter, ContainerResponseFilter {
+
+    /**
+     * Injected {@link HttpServletRequest}.
+     */
+    @Context
+    private HttpServletRequest request;
 
     /**
      * Stores the context builder for the current thread.
@@ -42,10 +52,12 @@ public class WarpJerseyInterceptor implements ContainerRequestFilter, ContainerR
     @Override
     public ContainerRequest filter(ContainerRequest containerRequest) {
 
-        builder.set(new JerseyContextBuilder());
+        if(builder.get() == null) {
+            builder.set(new JerseyContextBuilder());
+        }
         builder.get().setContainerRequest(containerRequest);
 
-        storeRestContext(containerRequest.getProperties());
+        storeRestContext();
 
         return containerRequest;
     }
@@ -56,20 +68,22 @@ public class WarpJerseyInterceptor implements ContainerRequestFilter, ContainerR
     @Override
     public ContainerResponse filter(ContainerRequest containerRequest, ContainerResponse containerResponse) {
 
+        if(builder.get() == null) {
+            builder.set(new JerseyContextBuilder());
+        }
         builder.get().setContainerResponse(containerResponse);
-        storeRestContext(containerRequest.getProperties());
+        storeRestContext();
 
         return containerResponse;
     }
 
     /**
      * Stores the rest context in the request as an attribute.
-     *
-     * @param properties
      */
-    private void storeRestContext(Map<String, Object> properties) {
+    private void storeRestContext() {
+
         RestContext restContext = builder.get().build();
 
-        properties.put(WarpRestCommons.WARP_REST_ATTRIBUTE, restContext);
+        request.setAttribute(WarpRestCommons.WARP_REST_ATTRIBUTE, restContext);
     }
 }
