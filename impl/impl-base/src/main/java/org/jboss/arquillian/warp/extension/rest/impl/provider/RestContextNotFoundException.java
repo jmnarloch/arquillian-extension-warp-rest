@@ -15,33 +15,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.warp.extension.rest.jersey.client;
-
-import org.jboss.arquillian.core.spi.LoadableExtension;
-import org.jboss.arquillian.warp.extension.rest.jersey.integration.WarpJerseyInterceptor;
-import org.jboss.arquillian.warp.extension.rest.spi.WarpRestInterceptorEnricher;
-import org.jboss.shrinkwrap.api.spec.WebArchive;
+package org.jboss.arquillian.warp.extension.rest.impl.provider;
 
 /**
  *
  */
-public class WarpJerseyInterceptorEnricher implements LoadableExtension, WarpRestInterceptorEnricher {
+public class RestContextNotFoundException extends RuntimeException {
 
     /**
-     * {@inheritDoc}
+     * Creates new instance of {@link RestContextNotFoundException} exception with detailed error message.
+     *
+     * @param message the detailed error message
      */
-    @Override
-    public void register(ExtensionBuilder builder) {
-
-        builder.service(WarpRestInterceptorEnricher.class, this.getClass());
+    public RestContextNotFoundException(String message) {
+        super(message);
     }
 
     /**
-     * {@inheritDoc}
+     * Creates new instance of {@link RestContextNotFoundException} exception with detailed error message and inner
+     * cause.
+     *
+     * @param message the detailed error message
+     * @param cause   the inner cause
      */
-    @Override
-    public void enrichWebArchive(WebArchive archive) {
-
-        archive.addPackage(WarpJerseyInterceptor.class.getPackage());
+    public RestContextNotFoundException(String message, Throwable cause) {
+        super(message, cause);
     }
 }

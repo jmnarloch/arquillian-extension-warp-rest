@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
+ * Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @authors tag. All rights reserved.
  * See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -68,8 +68,9 @@ public class JerseyContextBuilder implements RestContextBuilder {
 
         HttpRequestImpl request = new HttpRequestImpl();
         request.setContentType(getMediaTypeName(containerRequest.getMediaType()));
-        // TODO this likely won't work
-        // request.setEntity(containerRequest.getEntity(Object.class));
+        // TODO accessing the request entity in jersey is bizarre
+        // and requires knowing it's type up front, which is not possible at the current stage
+        // request.setEntity(containerRequest.getEntity(null));
         request.setHttpMethod(getHttpMethod(containerRequest.getMethod()));
         return request;
     }

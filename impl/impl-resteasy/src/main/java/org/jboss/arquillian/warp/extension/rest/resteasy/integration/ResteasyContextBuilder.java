@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
+ * Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @authors tag. All rights reserved.
  * See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -37,8 +37,6 @@ public class ResteasyContextBuilder implements RestContextBuilder {
 
     private org.jboss.resteasy.spi.HttpRequest httpRequest;
 
-    private ResourceMethod resourceMethod;
-
     private Object requestEntity;
 
     private MediaType responseMediaType;
@@ -53,12 +51,6 @@ public class ResteasyContextBuilder implements RestContextBuilder {
     public ResteasyContextBuilder setHttpRequest(org.jboss.resteasy.spi.HttpRequest httpRequest) {
 
         this.httpRequest = httpRequest;
-        return this;
-    }
-
-    public ResteasyContextBuilder setResourceMethod(ResourceMethod resourceMethod) {
-
-        this.resourceMethod = resourceMethod;
         return this;
     }
 

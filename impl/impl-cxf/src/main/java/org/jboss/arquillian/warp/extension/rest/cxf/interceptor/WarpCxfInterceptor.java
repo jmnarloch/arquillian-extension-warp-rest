@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
+ * Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @authors tag. All rights reserved.
  * See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -35,7 +35,7 @@ import java.util.Map;
  */
 public class WarpCxfInterceptor implements RequestHandler, ResponseHandler {
 
-    // TODO non-thread safe?
+    // TODO non-thread safe? - depends on how the interceptor is being created/handled by cxf
     @Context
     private MessageContext messageContext;
 
@@ -50,7 +50,9 @@ public class WarpCxfInterceptor implements RequestHandler, ResponseHandler {
     @Override
     public Response handleRequest(Message message, ClassResourceInfo classResourceInfo) {
 
-        builder.set(new CxfContextBuilder());
+        if(builder.get() == null) {
+            builder.set(new CxfContextBuilder());
+        }
         builder.get().setRequestMessage(message);
 
         storeRestContext();
@@ -64,6 +66,9 @@ public class WarpCxfInterceptor implements RequestHandler, ResponseHandler {
     @Override
     public Response handleResponse(Message message, OperationResourceInfo operationResourceInfo, Response response) {
 
+        if(builder.get() == null) {
+            builder.set(new CxfContextBuilder());
+        }
         builder.get().setResponseMessage(message).setResponse(response);
 
         storeRestContext();

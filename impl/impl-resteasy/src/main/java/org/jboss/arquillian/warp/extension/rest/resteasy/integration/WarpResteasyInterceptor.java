@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2011 Red Hat Inc. and/or its affiliates and other contributors
+ * Copyright 2013 Red Hat Inc. and/or its affiliates and other contributors
  * as indicated by the @authors tag. All rights reserved.
  * See the copyright.txt in the distribution for a
  * full listing of individual contributors.
@@ -63,8 +63,11 @@ public class WarpResteasyInterceptor implements PreProcessInterceptor, PostProce
         request.set(httpRequest);
 
         // stores the execution context
+        if(builder.get() == null) {
+            builder.set(new ResteasyContextBuilder());
+        }
         builder.set(new ResteasyContextBuilder());
-        builder.get().setHttpRequest(httpRequest).setResourceMethod(resourceMethod);
+        builder.get().setHttpRequest(httpRequest);
 
         // saves the the rest context in the request
         storeRestContext();
@@ -81,6 +84,10 @@ public class WarpResteasyInterceptor implements PreProcessInterceptor, PostProce
 
         // reads the entity from the request
         Object result = context.proceed();
+
+        if(builder.get() == null) {
+            builder.set(new ResteasyContextBuilder());
+        }
         builder.get().setRequestEntity(result);
 
         // saves the creates context in the request
@@ -96,6 +103,9 @@ public class WarpResteasyInterceptor implements PreProcessInterceptor, PostProce
     public void postProcess(ServerResponse serverResponse) {
 
         // sets the server response
+        if(builder.get() == null) {
+            builder.set(new ResteasyContextBuilder());
+        }
         builder.get().setServerResponse(serverResponse);
 
         // saves the the rest context in the request
@@ -109,6 +119,9 @@ public class WarpResteasyInterceptor implements PreProcessInterceptor, PostProce
     public void write(MessageBodyWriterContext context) throws IOException, WebApplicationException {
 
         context.proceed();
+        if(builder.get() == null) {
+            builder.set(new ResteasyContextBuilder());
+        }
         builder.get().setResponseMediaType(context.getMediaType());
 
         // saves the the rest context in the request
@@ -119,6 +132,7 @@ public class WarpResteasyInterceptor implements PreProcessInterceptor, PostProce
      * Stores the rest context in the request as an attribute.
      */
     private void storeRestContext() {
+
         RestContext restContext = builder.get().build();
 
         request.get().setAttribute(WarpRestCommons.WARP_REST_ATTRIBUTE, restContext);
