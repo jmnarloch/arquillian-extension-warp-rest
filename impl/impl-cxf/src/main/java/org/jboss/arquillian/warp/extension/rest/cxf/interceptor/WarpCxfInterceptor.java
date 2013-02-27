@@ -28,11 +28,12 @@ import org.jboss.arquillian.warp.extension.rest.spi.WarpRestCommons;
 
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
-import java.util.Map;
+import javax.ws.rs.ext.Provider;
 
 /**
  *
  */
+@Provider
 public class WarpCxfInterceptor implements RequestHandler, ResponseHandler {
 
     // TODO non-thread safe? - depends on how the interceptor is being created/handled by cxf
@@ -50,7 +51,7 @@ public class WarpCxfInterceptor implements RequestHandler, ResponseHandler {
     @Override
     public Response handleRequest(Message message, ClassResourceInfo classResourceInfo) {
 
-        if(builder.get() == null) {
+        if (builder.get() == null) {
             builder.set(new CxfContextBuilder());
         }
         builder.get().setRequestMessage(message);
@@ -66,7 +67,7 @@ public class WarpCxfInterceptor implements RequestHandler, ResponseHandler {
     @Override
     public Response handleResponse(Message message, OperationResourceInfo operationResourceInfo, Response response) {
 
-        if(builder.get() == null) {
+        if (builder.get() == null) {
             builder.set(new CxfContextBuilder());
         }
         builder.get().setResponseMessage(message).setResponse(response);

@@ -15,10 +15,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.quickstart.jersey.application;
+package org.jboss.arquillian.quickstart.cxf.application;
 
-import org.jboss.arquillian.quickstart.jersey.service.rs.StockServiceResource;
-import org.jboss.arquillian.warp.extension.rest.jersey.integration.WarpJerseyInterceptor;
+import org.apache.cxf.jaxrs.provider.JAXBElementProvider;
+import org.apache.cxf.jaxrs.provider.json.JSONProvider;
+import org.jboss.arquillian.quickstart.cxf.service.rs.StockServiceResource;
+import org.jboss.arquillian.warp.extension.rest.cxf.interceptor.WarpCxfInterceptor;
 
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
@@ -28,7 +30,7 @@ import java.util.Set;
 /**
  *
  */
-@ApplicationPath("/")
+@ApplicationPath("/rest")
 public class StockApplication extends Application {
 
     /**
@@ -36,7 +38,6 @@ public class StockApplication extends Application {
      */
     @Override
     public Set<Object> getSingletons() {
-
         Set<Object> singletons = new HashSet<Object>();
         singletons.add(new StockServiceResource());
         return singletons;
@@ -44,9 +45,9 @@ public class StockApplication extends Application {
 
     @Override
     public Set<Class<?>> getClasses() {
-
         Set<Class<?>> classes = new HashSet<Class<?>>();
-        // classes.add(WarpJerseyInterceptor.class);
+        classes.add(WarpCxfInterceptor.class);
+        classes.add(JSONProvider.class);
         return classes;
     }
 }

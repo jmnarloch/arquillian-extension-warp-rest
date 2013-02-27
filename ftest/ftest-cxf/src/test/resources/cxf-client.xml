@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:jaxrs="http://cxf.apache.org/jaxrs" xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+    <bean id="myJsonProvider" class="org.apache.cxf.jaxrs.provider.json.JSONProvider"/>
+
+    <util:list id="webClientProviders">
+        <ref bean="myJsonProvider"/>
+    </util:list>
+
+    <bean id="myWebClient" class="org.apache.cxf.jaxrs.client.WebClient"
+          factory-method="create">
+        <constructor-arg type="java.lang.String"
+                         value="http://some.base.url.that.responds/"/>
+        <constructor-arg ref="webClientProviders"/>
+    </bean>
+</beans>

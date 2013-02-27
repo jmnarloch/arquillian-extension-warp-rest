@@ -56,7 +56,7 @@ public class WarpRestExtension implements LoadableExtension, WarpDeploymentEnric
     @Override
     public JavaArchive getEnrichmentLibrary() {
 
-        JavaArchive archive = ShrinkWrap.create(JavaArchive.class);
+        JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "warp-rest-extension.jar");
 
         // adds the api classes
         archive.addPackage(RestContext.class.getPackage());

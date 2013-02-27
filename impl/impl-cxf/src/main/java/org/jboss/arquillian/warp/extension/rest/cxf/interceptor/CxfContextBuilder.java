@@ -27,6 +27,7 @@ import org.jboss.arquillian.warp.extension.rest.spi.HttpResponseImpl;
 import org.jboss.arquillian.warp.extension.rest.spi.RestContextBuilder;
 import org.jboss.arquillian.warp.extension.rest.spi.RestContextImpl;
 
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 /**
@@ -69,9 +70,11 @@ public class CxfContextBuilder implements RestContextBuilder {
     private HttpRequest buildHttpRequest() {
 
         HttpRequestImpl request = new HttpRequestImpl();
-        request.setContentType((String) requestMessage.get(Message.CONTENT_TYPE));
-        request.setEntity(getRequestEntity());
-        request.setHttpMethod(getRequestMethod((String) requestMessage.get(Message.HTTP_REQUEST_METHOD)));
+        if (requestMessage != null) {
+            request.setContentType((String) requestMessage.get(Message.CONTENT_TYPE));
+            request.setEntity(getRequestEntity());
+            request.setHttpMethod(getRequestMethod((String) requestMessage.get(Message.HTTP_REQUEST_METHOD)));
+        }
         return request;
     }
 
@@ -79,8 +82,8 @@ public class CxfContextBuilder implements RestContextBuilder {
 
         HttpResponseImpl response = new HttpResponseImpl();
 
-        if (responseMessage != null) {
-            response.setContentType(this.response.getMediaType().toString());
+        if (this.response != null) {
+            response.setContentType((String) responseMessage.get(Message.CONTENT_TYPE));
             response.setStatusCode(this.response.getStatus());
             response.setEntity(this.response.getEntity());
         }
@@ -88,12 +91,19 @@ public class CxfContextBuilder implements RestContextBuilder {
         return response;
     }
 
+    private String getMediaTypeName(MediaType mediaType) {
+
+        return mediaType != null ? mediaType.toString() : null;
+    }
+
     public Object getRequestEntity() {
+
         return requestMessage.getContentFormats().size() > 0 ?
                 requestMessage.getContent(requestMessage.getContentFormats().iterator().next()) : null;
     }
 
     private HttpMethod getRequestMethod(String methodName) {
+
         return Enum.valueOf(HttpMethod.class, methodName.toUpperCase());
     }
 }
