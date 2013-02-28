@@ -167,7 +167,7 @@ public class StockServiceResourceTestCase {
                 assertEquals("Stock has invalid code.", stock.getCode(), result.getCode());
                 assertEquals("Stock has invalid value.", stock.getValue(), result.getValue());
             }
-        }).observe(request().uri().contains("rest/stocks")).inspect(new Inspection() {
+        }).observe(request().uri().contains("rest/stocks/2")).inspect(new Inspection() {
 
             private static final long serialVersionUID = 1L;
 
@@ -179,7 +179,7 @@ public class StockServiceResourceTestCase {
 
                 assertEquals(HttpMethod.GET, restContext.getRequest().getMethod());
                 assertEquals(200, restContext.getResponse().getStatusCode());
-                assertEquals("application/xml", restContext.getResponse().getContentType());
+                assertEquals("text/xml", restContext.getResponse().getContentType());
             }
         });
     }
@@ -197,15 +197,5 @@ public class StockServiceResourceTestCase {
         stock.setValue(new BigDecimal(127D));
         stock.setDate(new Date());
         return stock;
-    }
-
-    /**
-     * Creates instance of web client.
-     *
-     * @return created instance of web client
-     */
-    private WebClient createWebClient() {
-
-        return WebClient.create(contextPath.toString(), Arrays.asList(new JSONProvider(), new JAXBElementProvider()));
     }
 }
