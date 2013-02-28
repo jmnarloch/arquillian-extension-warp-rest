@@ -53,6 +53,8 @@ public class StockServiceAjaxTestCase {
                 .loadMetadataFromPom("pom.xml")
                 .artifacts("org.apache.cxf:cxf-rt-frontend-jaxrs")
                 .artifacts("org.apache.cxf:cxf-rt-rs-extension-providers")
+                .artifacts("org.apache.cxf:cxf-rt-transports-http")
+                .artifacts("org.apache.cxf:cxf-rt-rs-extension-search")
                 .artifacts("org.codehaus.jettison:jettison")
                 .artifacts("org.springframework:spring-web")
                 .resolveAsFiles();

@@ -77,6 +77,8 @@ public class StockServiceResourceTestCase {
                 .artifacts("org.easytesting:fest-assert")
                 .artifacts("org.apache.cxf:cxf-rt-frontend-jaxrs")
                 .artifacts("org.apache.cxf:cxf-rt-rs-extension-providers")
+                .artifacts("org.apache.cxf:cxf-rt-transports-http")
+                .artifacts("org.apache.cxf:cxf-rt-rs-extension-search")
                 .artifacts("org.codehaus.jettison:jettison")
                 .artifacts("org.springframework:spring-web")
                 .resolveAsFiles();
@@ -110,8 +112,12 @@ public class StockServiceResourceTestCase {
     @Before
     public void setUp() {
 
+        JSONProvider provider = new JSONProvider();
+        provider.setSerializeAsArray(true);
+        provider.setConvention("badgerfish");
+
         stockService = JAXRSClientFactory.create(contextPath + "app/rest/",
-                StockService.class, Arrays.asList(new JSONProvider()));
+                StockService.class, Arrays.asList(provider));
 
         WebClient.client(stockService)
                 .type(MediaType.APPLICATION_JSON_TYPE)
