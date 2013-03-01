@@ -34,10 +34,16 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import java.util.Collection;
 
 /**
+ * Warp Rest extension. This class is responsible for bootstrapping the core functionality,
+ * package all required classes and enrich the test deployment.
  *
+ * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  */
 public class WarpRestExtension implements LoadableExtension, WarpDeploymentEnrichmentExtension {
 
+    /**
+     * {@link ServiceLoader} instance.
+     */
     @Inject
     private Instance<ServiceLoader> serviceLoaderInstance;
 

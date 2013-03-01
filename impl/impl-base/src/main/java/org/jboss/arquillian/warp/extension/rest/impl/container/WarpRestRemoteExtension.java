@@ -22,7 +22,9 @@ import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
 import org.jboss.arquillian.warp.extension.rest.impl.provider.RestContextProvider;
 
 /**
+ * Warp rest remote extension that registers common services within the container.
  *
+ * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  */
 public class WarpRestRemoteExtension implements RemoteLoadableExtension {
 

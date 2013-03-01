@@ -18,7 +18,10 @@
 package org.jboss.arquillian.warp.extension.rest.impl.provider;
 
 /**
+ * Exception used for indicating that the {@link org.jboss.arquillian.warp.extension.rest.api.RestContext}
+ * hasn't been found for the given test case.
  *
+ * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  */
 public class RestContextNotFoundException extends RuntimeException {
 

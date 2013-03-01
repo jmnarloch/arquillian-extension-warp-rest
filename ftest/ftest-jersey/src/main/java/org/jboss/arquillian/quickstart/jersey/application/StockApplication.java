@@ -41,12 +41,4 @@ public class StockApplication extends Application {
         singletons.add(new StockServiceResource());
         return singletons;
     }
-
-    @Override
-    public Set<Class<?>> getClasses() {
-
-        Set<Class<?>> classes = new HashSet<Class<?>>();
-        // classes.add(WarpJerseyInterceptor.class);
-        return classes;
-    }
 }

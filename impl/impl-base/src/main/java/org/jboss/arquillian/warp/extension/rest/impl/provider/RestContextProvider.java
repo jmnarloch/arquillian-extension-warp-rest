@@ -28,7 +28,10 @@ import javax.servlet.http.HttpServletRequest;
 import java.lang.annotation.Annotation;
 
 /**
+ * Provider that allows to lookup the {@link RestContext}
  *
+ * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
+ * @see RestContext
  */
 public class RestContextProvider implements ResourceProvider {
 
@@ -53,12 +56,17 @@ public class RestContextProvider implements ResourceProvider {
     @Override
     public Object lookup(ArquillianResource arquillianResource, Annotation... annotations) {
 
-        // TODO add error handling
-
         // retrieves the http request
         HttpServletRequest request = requestInstance.get();
+        // retrieves the rest context as a attribute from request
+        RestContext restContext = (RestContext) request.getAttribute(WarpRestCommons.WARP_REST_ATTRIBUTE);
 
-        // tries to retrieve the RestContext from the request and return it as a result
-        return (RestContext) request.getAttribute(WarpRestCommons.WARP_REST_ATTRIBUTE);
+        if(restContext == null) {
+
+            throw new RestContextNotFoundException("The instance of RestContext can not be lookup."
+                    + " Please check whether you had correctly configured interceptors");
+        }
+
+        return restContext;
     }
 }
