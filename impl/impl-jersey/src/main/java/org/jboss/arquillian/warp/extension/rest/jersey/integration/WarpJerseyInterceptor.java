@@ -22,29 +22,40 @@ import com.sun.jersey.spi.container.ContainerRequestFilter;
 import com.sun.jersey.spi.container.ContainerResponse;
 import com.sun.jersey.spi.container.ContainerResponseFilter;
 import org.jboss.arquillian.warp.extension.rest.api.RestContext;
-import org.jboss.arquillian.warp.extension.rest.spi.WarpRestCommons;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.ext.Provider;
-import java.util.Map;
+
+import static org.jboss.arquillian.warp.extension.rest.jersey.integration.JerseyContextBuilder.buildContext;
 
 /**
+ * Jersey interceptor. This class implements {@link ContainerRequestFilter} and {@link ContainerResponseFilter} in order
+ * to capture the execution state within the server.
+ * <p/>
+ * Implementation captures the state and stores it the {@link RestContext} which is being bound to executing request.
  *
+ * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  */
 @Provider
 public class WarpJerseyInterceptor implements ContainerRequestFilter, ContainerResponseFilter {
 
     /**
-     * Injected {@link HttpServletRequest}.
+     * Represents the {@link HttpServletRequest}.
      */
-    @Context
-    private HttpServletRequest request;
+    private static final ThreadLocal<HttpServletRequest> servletRequest =
+            new InheritableThreadLocal<HttpServletRequest>();
 
     /**
-     * Stores the context builder for the current thread.
+     * Sets the {@link HttpServletRequest} instance.
+     *
+     * @param request the request instance
      */
-    private static final ThreadLocal<JerseyContextBuilder> builder = new ThreadLocal<JerseyContextBuilder>();
+    @Context
+    public void setHttpServletRequest(HttpServletRequest request) {
+
+        servletRequest.set(request);
+    }
 
     /**
      * {@inheritDoc}
@@ -52,13 +63,12 @@ public class WarpJerseyInterceptor implements ContainerRequestFilter, ContainerR
     @Override
     public ContainerRequest filter(ContainerRequest containerRequest) {
 
-        if(builder.get() == null) {
-            builder.set(new JerseyContextBuilder());
-        }
-        builder.get().setContainerRequest(containerRequest);
+        // stores the container request
+        buildContext(servletRequest.get())
+                .setContainerRequest(containerRequest)
+                .build();
 
-        storeRestContext();
-
+        // returns the result
         return containerRequest;
     }
 
@@ -68,22 +78,13 @@ public class WarpJerseyInterceptor implements ContainerRequestFilter, ContainerR
     @Override
     public ContainerResponse filter(ContainerRequest containerRequest, ContainerResponse containerResponse) {
 
-        if(builder.get() == null) {
-            builder.set(new JerseyContextBuilder());
-        }
-        builder.get().setContainerResponse(containerResponse);
-        storeRestContext();
+        // stores the container request and response
+        buildContext(servletRequest.get())
+                .setContainerRequest(containerRequest)
+                .setContainerResponse(containerResponse)
+                .build();
 
+        // returns the result
         return containerResponse;
-    }
-
-    /**
-     * Stores the rest context in the request as an attribute.
-     */
-    private void storeRestContext() {
-
-        RestContext restContext = builder.get().build();
-
-        request.setAttribute(WarpRestCommons.WARP_REST_ATTRIBUTE, restContext);
     }
 }

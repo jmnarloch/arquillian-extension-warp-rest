@@ -24,5 +24,5 @@ import org.jboss.arquillian.warp.extension.rest.api.RestContext;
  */
 public interface RestContextBuilder {
 
-    RestContext build();
+    void build();
 }

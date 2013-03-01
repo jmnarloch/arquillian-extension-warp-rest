@@ -18,6 +18,7 @@
 package org.jboss.arquillian.warp.extension.rest.cxf.interceptor;
 
 import org.apache.cxf.message.Message;
+import org.jboss.arquillian.container.spi.client.deployment.Validate;
 import org.jboss.arquillian.warp.extension.rest.api.HttpMethod;
 import org.jboss.arquillian.warp.extension.rest.api.HttpRequest;
 import org.jboss.arquillian.warp.extension.rest.api.HttpResponse;
@@ -26,47 +27,123 @@ import org.jboss.arquillian.warp.extension.rest.spi.HttpRequestImpl;
 import org.jboss.arquillian.warp.extension.rest.spi.HttpResponseImpl;
 import org.jboss.arquillian.warp.extension.rest.spi.RestContextBuilder;
 import org.jboss.arquillian.warp.extension.rest.spi.RestContextImpl;
+import org.jboss.arquillian.warp.extension.rest.spi.WarpRestCommons;
 
-import javax.ws.rs.core.MediaType;
+import javax.servlet.ServletRequest;
 import javax.ws.rs.core.Response;
 
 /**
+ * The CXF specific {@link RestContext} builder.
  *
+ * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  */
-public class CxfContextBuilder implements RestContextBuilder {
+final class CxfContextBuilder implements RestContextBuilder {
 
+    /**
+     * Represents the servlet request.
+     */
+    private final ServletRequest servletRequest;
+
+    /**
+     * Represents the rest context
+     */
+    private final RestContextImpl restContext;
+
+    /**
+     * Represents the request message.
+     */
     private Message requestMessage;
 
+    /**
+     * Represents the response message.
+     */
     private Message responseMessage;
 
+    /**
+     * Represents the response.
+     */
     private Response response;
 
+    /**
+     * Creates new instance of {@link CxfContextBuilder} class.
+     *
+     * @param servletRequest the servlet request
+     */
+    private CxfContextBuilder(ServletRequest servletRequest) {
+        Validate.notNull(servletRequest, "The 'servletRequest' can not be null.");
+
+        this.servletRequest = servletRequest;
+        this.restContext = getRestContext();
+    }
+
+    /**
+     * The utility method that creates new instance of {@link CxfContextBuilder}.
+     *
+     * @param servletRequest the servlet request
+     *
+     * @return the created builder instance
+     *
+     * @throws IllegalArgumentException if servletRequest is null
+     */
+    public static CxfContextBuilder buildContext(ServletRequest servletRequest) {
+
+        return new CxfContextBuilder(servletRequest);
+    }
+
+    /**
+     * Sets the request message
+     *
+     * @param requestMessage the request message
+     *
+     * @return the context builder
+     */
     public CxfContextBuilder setRequestMessage(Message requestMessage) {
 
         this.requestMessage = requestMessage;
         return this;
     }
 
+    /**
+     * Sets the response message.
+     *
+     * @param responseMessage the response message
+     *
+     * @return the context builder
+     */
     public CxfContextBuilder setResponseMessage(Message responseMessage) {
 
         this.responseMessage = responseMessage;
         return this;
     }
 
+    /**
+     * Sets the response.
+     *
+     * @param response the response
+     *
+     * @return the context builder
+     */
     public CxfContextBuilder setResponse(Response response) {
 
         this.response = response;
         return this;
     }
 
-    public RestContext build() {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void build() {
 
-        RestContextImpl result = new RestContextImpl();
-        result.setHttpRequest(buildHttpRequest());
-        result.setHttpResponse(buildHttpResponse());
-        return result;
+        restContext.setHttpRequest(buildHttpRequest());
+        restContext.setHttpResponse(buildHttpResponse());
     }
 
+    /**
+     * Builds the http request.
+     *
+     * @return the http request
+     */
     private HttpRequest buildHttpRequest() {
 
         HttpRequestImpl request = new HttpRequestImpl();
@@ -78,6 +155,11 @@ public class CxfContextBuilder implements RestContextBuilder {
         return request;
     }
 
+    /**
+     * Builds the http response.
+     *
+     * @return the http response
+     */
     private HttpResponse buildHttpResponse() {
 
         HttpResponseImpl response = new HttpResponseImpl();
@@ -91,19 +173,44 @@ public class CxfContextBuilder implements RestContextBuilder {
         return response;
     }
 
-    private String getMediaTypeName(MediaType mediaType) {
-
-        return mediaType != null ? mediaType.toString() : null;
-    }
-
+    /**
+     * Retrieves the request entity.
+     *
+     * @return the request entity
+     */
     public Object getRequestEntity() {
 
         return requestMessage.getContentFormats().size() > 0 ?
                 requestMessage.getContent(requestMessage.getContentFormats().iterator().next()) : null;
     }
 
+    /**
+     * Maps the http method name to {@link HttpMethod}.
+     *
+     * @param methodName the method name
+     *
+     * @return the {@link HttpMethod}
+     */
     private HttpMethod getRequestMethod(String methodName) {
 
         return Enum.valueOf(HttpMethod.class, methodName.toUpperCase());
+    }
+
+    /**
+     * Retrieves the {@link RestContext} stored in the request. <p/> If non exists, then new one is being created.
+     *
+     * @return the rest context
+     */
+    private RestContextImpl getRestContext() {
+
+        RestContextImpl restContext = (RestContextImpl) servletRequest.getAttribute(WarpRestCommons.WARP_REST_ATTRIBUTE);
+
+        if (restContext == null) {
+
+            restContext = new RestContextImpl();
+            servletRequest.setAttribute(WarpRestCommons.WARP_REST_ATTRIBUTE, restContext);
+        }
+
+        return restContext;
     }
 }

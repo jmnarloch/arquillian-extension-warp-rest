@@ -26,24 +26,41 @@ import org.apache.cxf.message.Message;
 import org.jboss.arquillian.warp.extension.rest.api.RestContext;
 import org.jboss.arquillian.warp.extension.rest.spi.WarpRestCommons;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
 
+import static org.jboss.arquillian.warp.extension.rest.cxf.interceptor.CxfContextBuilder.buildContext;
+
 /**
+ * CXF interceptor. This class implements {@link RequestHandler} and {@link ResponseHandler} in order to capture the execution state within
+ * the server.
+ * <p/>
+ * Implementation captures the state and stores it the {@link RestContext} which is being bound to
+ * executing request.
  *
+ * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  */
 @Provider
 public class WarpCxfInterceptor implements RequestHandler, ResponseHandler {
 
-    // TODO non-thread safe? - depends on how the interceptor is being created/handled by cxf
-    @Context
-    private MessageContext messageContext;
+    /**
+     * Represents the servlet request.
+     */
+    private static final ThreadLocal<HttpServletRequest> servletRequest =
+            new InheritableThreadLocal<HttpServletRequest>();
 
     /**
-     * Stores the context builder for the current thread.
+     * Sets the message context.
+     *
+     * @param messageContext the message context
      */
-    private static final ThreadLocal<CxfContextBuilder> builder = new ThreadLocal<CxfContextBuilder>();
+    @Context
+    public void setMessageContext(MessageContext messageContext) {
+
+        servletRequest.set(messageContext.getHttpServletRequest());
+    }
 
     /**
      * {@inheritDoc}
@@ -51,12 +68,9 @@ public class WarpCxfInterceptor implements RequestHandler, ResponseHandler {
     @Override
     public Response handleRequest(Message message, ClassResourceInfo classResourceInfo) {
 
-        if (builder.get() == null) {
-            builder.set(new CxfContextBuilder());
-        }
-        builder.get().setRequestMessage(message);
-
-        storeRestContext();
+        buildContext(servletRequest.get())
+                .setRequestMessage(message)
+                .build();
 
         return null;
     }
@@ -67,22 +81,11 @@ public class WarpCxfInterceptor implements RequestHandler, ResponseHandler {
     @Override
     public Response handleResponse(Message message, OperationResourceInfo operationResourceInfo, Response response) {
 
-        if (builder.get() == null) {
-            builder.set(new CxfContextBuilder());
-        }
-        builder.get().setResponseMessage(message).setResponse(response);
-
-        storeRestContext();
+        buildContext(servletRequest.get())
+                .setResponseMessage(message)
+                .setResponse(response)
+                .build();
 
         return null;
-    }
-
-    /**
-     * Stores the rest context in the request as an attribute.
-     */
-    private void storeRestContext() {
-        RestContext restContext = builder.get().build();
-
-        messageContext.getHttpServletRequest().setAttribute(WarpRestCommons.WARP_REST_ATTRIBUTE, restContext);
     }
 }

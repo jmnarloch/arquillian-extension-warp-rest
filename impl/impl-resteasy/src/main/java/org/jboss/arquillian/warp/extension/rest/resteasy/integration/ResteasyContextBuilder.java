@@ -17,6 +17,7 @@
  */
 package org.jboss.arquillian.warp.extension.rest.resteasy.integration;
 
+import org.jboss.arquillian.container.spi.client.deployment.Validate;
 import org.jboss.arquillian.warp.extension.rest.api.HttpMethod;
 import org.jboss.arquillian.warp.extension.rest.api.HttpRequest;
 import org.jboss.arquillian.warp.extension.rest.api.HttpResponse;
@@ -25,61 +26,126 @@ import org.jboss.arquillian.warp.extension.rest.spi.HttpRequestImpl;
 import org.jboss.arquillian.warp.extension.rest.spi.HttpResponseImpl;
 import org.jboss.arquillian.warp.extension.rest.spi.RestContextBuilder;
 import org.jboss.arquillian.warp.extension.rest.spi.RestContextImpl;
-import org.jboss.resteasy.core.ResourceMethod;
+import org.jboss.arquillian.warp.extension.rest.spi.WarpRestCommons;
 import org.jboss.resteasy.core.ServerResponse;
 
 import javax.ws.rs.core.MediaType;
 
 /**
+ * The RestEasy specific {@link RestContext} builder.
  *
+ * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  */
-public class ResteasyContextBuilder implements RestContextBuilder {
+final class ResteasyContextBuilder implements RestContextBuilder {
 
-    private org.jboss.resteasy.spi.HttpRequest httpRequest;
+    /**
+     * Represents the http request.
+     */
+    private final org.jboss.resteasy.spi.HttpRequest httpRequest;
 
+    /**
+     * Represents the build rest context.
+     */
+    private final RestContextImpl restContext;
+
+    /**
+     * The entity that has been send to the service.
+     */
     private Object requestEntity;
 
+    /**
+     * The response content type.
+     */
     private MediaType responseMediaType;
 
+    /**
+     * Resteasy server response.
+     */
     private ServerResponse serverResponse;
 
-    public ResteasyContextBuilder() {
+    /**
+     * <p>Creates new instance of {@link ResteasyContextBuilder}.</p>
+     *
+     * @param httpRequest the http request
+     *
+     * @throws IllegalArgumentException if httpRequest is null
+     */
+    private ResteasyContextBuilder(org.jboss.resteasy.spi.HttpRequest httpRequest) {
 
-        // empty constructor
-    }
-
-    public ResteasyContextBuilder setHttpRequest(org.jboss.resteasy.spi.HttpRequest httpRequest) {
+        Validate.notNull(httpRequest, "The 'httpRequest' can not be null.");
 
         this.httpRequest = httpRequest;
-        return this;
+        this.restContext = getRestContext();
     }
 
+    /**
+     * The utility method that creates new instance of {@link ResteasyContextBuilder}.
+     *
+     * @param httpRequest the http request
+     *
+     * @return the created builder instance
+     *
+     * @throws IllegalArgumentException if servletRequest is null
+     */
+    public static ResteasyContextBuilder buildContext(org.jboss.resteasy.spi.HttpRequest httpRequest) {
+
+        return new ResteasyContextBuilder(httpRequest);
+    }
+
+    /**
+     * Sets the response content type.
+     *
+     * @param responseMediaType the response content type
+     *
+     * @return the rest context builder
+     */
     public ResteasyContextBuilder setResponseMediaType(MediaType responseMediaType) {
 
         this.responseMediaType = responseMediaType;
         return this;
     }
 
+    /**
+     * Sets the sever response.
+     *
+     * @param serverResponse the server response
+     *
+     * @return the rest context builder
+     */
     public ResteasyContextBuilder setServerResponse(ServerResponse serverResponse) {
 
         this.serverResponse = serverResponse;
         return this;
     }
 
+    /**
+     * Sets the request entity.
+     *
+     * @param entity the request entity
+     *
+     * @return the rest context builder
+     */
     public ResteasyContextBuilder setRequestEntity(Object entity) {
 
         this.requestEntity = entity;
         return this;
     }
 
-    public RestContext build() {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void build() {
 
-        RestContextImpl result = new RestContextImpl();
-        result.setHttpRequest(buildHttpRequest());
-        result.setHttpResponse(buildHttpResponse());
-        return result;
+        restContext.setHttpRequest(buildHttpRequest());
+        restContext.setHttpResponse(buildHttpResponse());
     }
 
+    /**
+     * Builds the {@link HttpRequest}.
+     *
+     * @return the {@link HttpRequest}
+     */
     private HttpRequest buildHttpRequest() {
 
         HttpRequestImpl request = new HttpRequestImpl();
@@ -89,6 +155,11 @@ public class ResteasyContextBuilder implements RestContextBuilder {
         return request;
     }
 
+    /**
+     * Builds the {@link HttpResponse}.
+     *
+     * @return the {@link HttpResponse}
+     */
     private HttpResponse buildHttpResponse() {
 
         HttpResponseImpl response = new HttpResponseImpl();
@@ -102,12 +173,45 @@ public class ResteasyContextBuilder implements RestContextBuilder {
         return response;
     }
 
+    /**
+     * Retrieves the content type or null if it is not set.
+     *
+     * @param mediaType the media type
+     *
+     * @return the content type/mime name
+     */
     private static String getMediaTypeName(MediaType mediaType) {
+
         return mediaType != null ? mediaType.toString() : null;
     }
 
+    /**
+     * Maps the http method name into corresponding {@link HttpMethod}.
+     *
+     * @param methodName the http method name
+     *
+     * @return the {@link HttpMethod}
+     */
     private static HttpMethod getHttpMethod(String methodName) {
 
         return Enum.valueOf(HttpMethod.class, methodName.toUpperCase());
+    }
+
+    /**
+     * Retrieves the {@link RestContext} stored in the request. <p/> If non exists, then new one is being created.
+     *
+     * @return the rest context
+     */
+    private RestContextImpl getRestContext() {
+
+        RestContextImpl restContext = (RestContextImpl) httpRequest.getAttribute(WarpRestCommons.WARP_REST_ATTRIBUTE);
+
+        if (restContext == null) {
+
+            restContext = new RestContextImpl();
+            httpRequest.setAttribute(WarpRestCommons.WARP_REST_ATTRIBUTE, restContext);
+        }
+
+        return restContext;
     }
 }

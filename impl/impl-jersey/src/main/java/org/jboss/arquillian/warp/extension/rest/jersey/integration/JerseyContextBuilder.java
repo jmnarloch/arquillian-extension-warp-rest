@@ -19,6 +19,7 @@ package org.jboss.arquillian.warp.extension.rest.jersey.integration;
 
 import com.sun.jersey.spi.container.ContainerRequest;
 import com.sun.jersey.spi.container.ContainerResponse;
+import org.jboss.arquillian.container.spi.client.deployment.Validate;
 import org.jboss.arquillian.warp.extension.rest.api.HttpMethod;
 import org.jboss.arquillian.warp.extension.rest.api.HttpRequest;
 import org.jboss.arquillian.warp.extension.rest.api.HttpResponse;
@@ -27,54 +28,123 @@ import org.jboss.arquillian.warp.extension.rest.spi.HttpRequestImpl;
 import org.jboss.arquillian.warp.extension.rest.spi.HttpResponseImpl;
 import org.jboss.arquillian.warp.extension.rest.spi.RestContextBuilder;
 import org.jboss.arquillian.warp.extension.rest.spi.RestContextImpl;
+import org.jboss.arquillian.warp.extension.rest.spi.WarpRestCommons;
 
+import javax.servlet.ServletRequest;
 import javax.ws.rs.core.MediaType;
 
 /**
+ * The Jersey specific {@link RestContext} builder.
  *
+ * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  */
-public class JerseyContextBuilder implements RestContextBuilder {
+final class JerseyContextBuilder implements RestContextBuilder {
 
+    /**
+     * Represents the servlet request.
+     */
+    private final ServletRequest servletRequest;
+
+    /**
+     * Represents the rest context.
+     */
+    private final RestContextImpl restContext;
+
+    /**
+     * Represents the container request.
+     */
     private ContainerRequest containerRequest;
 
+    /**
+     * Represents the container response.
+     */
     private ContainerResponse containerResponse;
 
-    public JerseyContextBuilder() {
+    /**
+     * Creates new instance of {@link JerseyContextBuilder} class.
+     *
+     * @param servletRequest the servlet request
+     *
+     * @throws IllegalArgumentException if servlet request is null
+     */
+    private JerseyContextBuilder(ServletRequest servletRequest) {
+        Validate.notNull(servletRequest, "The 'servletRequest' can not be null.");
 
-        // empty constructor
+        this.servletRequest = servletRequest;
+        this.restContext = getRestContext();
     }
 
+    /**
+     * The utility method that creates new instance of {@link JerseyContextBuilder}.
+     *
+     * @param servletRequest the servlet request
+     *
+     * @return the created builder instance
+     *
+     * @throws IllegalArgumentException if servletRequest is null
+     */
+    public static JerseyContextBuilder buildContext(ServletRequest servletRequest) {
+
+        return new JerseyContextBuilder(servletRequest);
+    }
+
+    /**
+     * Sets the container request.
+     *
+     * @param containerRequest the container request
+     *
+     * @return the rest context builder
+     */
     public JerseyContextBuilder setContainerRequest(ContainerRequest containerRequest) {
 
         this.containerRequest = containerRequest;
         return this;
     }
 
+    /**
+     * Sets the container response
+     *
+     * @param containerResponse the container response
+     *
+     * @return the rest context builder
+     */
     public JerseyContextBuilder setContainerResponse(ContainerResponse containerResponse) {
 
         this.containerResponse = containerResponse;
         return this;
     }
 
-    public RestContext build() {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void build() {
 
-        RestContextImpl result = new RestContextImpl();
-        result.setHttpRequest(buildHttpRequest());
-        result.setHttpResponse(buildHttpResponse());
-        return result;
+        restContext.setHttpRequest(buildHttpRequest());
+        restContext.setHttpResponse(buildHttpResponse());
     }
 
+    /**
+     * Builds the {@link HttpRequest}.
+     *
+     * @return the {@link HttpRequest}
+     */
     private HttpRequest buildHttpRequest() {
 
         HttpRequestImpl request = new HttpRequestImpl();
         request.setContentType(getMediaTypeName(containerRequest.getMediaType()));
         // TODO accessing the request entity in jersey is bizarre
         // and requires knowing it's type up front, which is not possible at the current stage
-        // request.setEntity(containerRequest.getEntity(null));
+        // request.setEntity(containerRequest.getEntity(Object.class));
         request.setHttpMethod(getHttpMethod(containerRequest.getMethod()));
         return request;
     }
 
+    /**
+     * Builds the {@link HttpResponse}.
+     *
+     * @return the {@link HttpResponse}
+     */
     private HttpResponse buildHttpResponse() {
 
         HttpResponseImpl response = new HttpResponseImpl();
@@ -88,12 +158,44 @@ public class JerseyContextBuilder implements RestContextBuilder {
         return response;
     }
 
+    /**
+     * Retrieves the content mime type name.
+     *
+     * @param mediaType the content mime type
+     *
+     * @return the content mime type name
+     */
     private String getMediaTypeName(MediaType mediaType) {
         return mediaType != null ? mediaType.toString() : null;
     }
 
+    /**
+     * Maps the http method name into correspondng {@link HttpMethod}.
+     *
+     * @param methodName the method name
+     *
+     * @return the {@link HttpMethod}
+     */
     private static HttpMethod getHttpMethod(String methodName) {
 
         return Enum.valueOf(HttpMethod.class, methodName.toUpperCase());
+    }
+
+    /**
+     * Retrieves the {@link RestContext} stored in the request. <p/> If non exists, then new one is being created.
+     *
+     * @return the rest context
+     */
+    private RestContextImpl getRestContext() {
+
+        RestContextImpl restContext = (RestContextImpl) servletRequest.getAttribute(WarpRestCommons.WARP_REST_ATTRIBUTE);
+
+        if (restContext == null) {
+
+            restContext = new RestContextImpl();
+            servletRequest.setAttribute(WarpRestCommons.WARP_REST_ATTRIBUTE, restContext);
+        }
+
+        return restContext;
     }
 }

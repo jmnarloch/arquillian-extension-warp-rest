@@ -55,10 +55,8 @@
         </dependency>
 
         <dependency>
-            <groupId>org.jboss.spec</groupId>
-            <artifactId>jboss-javaee-web-6.0</artifactId>
-            <type>pom</type>
-            <scope>provided</scope>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-servlet_3.0_spec</artifactId>
         </dependency>
 
     </dependencies>

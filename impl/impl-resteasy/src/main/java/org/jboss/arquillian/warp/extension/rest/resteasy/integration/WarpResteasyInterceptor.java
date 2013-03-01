@@ -18,7 +18,6 @@
 package org.jboss.arquillian.warp.extension.rest.resteasy.integration;
 
 import org.jboss.arquillian.warp.extension.rest.api.RestContext;
-import org.jboss.arquillian.warp.extension.rest.spi.WarpRestCommons;
 import org.jboss.resteasy.annotations.interception.ServerInterceptor;
 import org.jboss.resteasy.core.ResourceMethod;
 import org.jboss.resteasy.core.ServerResponse;
@@ -35,8 +34,17 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.ext.Provider;
 import java.io.IOException;
 
+import static org.jboss.arquillian.warp.extension.rest.resteasy.integration.ResteasyContextBuilder.buildContext;
+
 /**
+ * RestEasy interceptor. This class implements {@link PreProcessInterceptor}, {@link PostProcessInterceptor} {@link
+ * MessageBodyReaderInterceptor} and {@link MessageBodyWriterInterceptor} in order to capture the execution state within
+ * the server.
+ * <p/>
+ * Implementation captures the state and stores it the {@link RestContext} which is being bound to
+ * executing request.
  *
+ * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  */
 @Provider
 @ServerInterceptor
@@ -46,12 +54,7 @@ public class WarpResteasyInterceptor implements PreProcessInterceptor, PostProce
     /**
      * Stores the  for the current thread.
      */
-    private static final ThreadLocal<HttpRequest> request = new ThreadLocal<HttpRequest>();
-
-    /**
-     * Stores the context builder for the current thread.
-     */
-    private static final ThreadLocal<ResteasyContextBuilder> builder = new ThreadLocal<ResteasyContextBuilder>();
+    private static final ThreadLocal<HttpRequest> request = new InheritableThreadLocal<HttpRequest>();
 
     /**
      * {@inheritDoc}
@@ -62,15 +65,8 @@ public class WarpResteasyInterceptor implements PreProcessInterceptor, PostProce
         // stores the http request
         request.set(httpRequest);
 
-        // stores the execution context
-        if(builder.get() == null) {
-            builder.set(new ResteasyContextBuilder());
-        }
-        builder.set(new ResteasyContextBuilder());
-        builder.get().setHttpRequest(httpRequest);
-
-        // saves the the rest context in the request
-        storeRestContext();
+        // initialize the context
+        buildContext(request.get()).build();
 
         // returns null, does not overrides the original server response
         return null;
@@ -85,14 +81,10 @@ public class WarpResteasyInterceptor implements PreProcessInterceptor, PostProce
         // reads the entity from the request
         Object result = context.proceed();
 
-        if(builder.get() == null) {
-            builder.set(new ResteasyContextBuilder());
-        }
-        builder.get().setRequestEntity(result);
+        // appends the entity to the context
+        buildContext(request.get()).setRequestEntity(result).build();
 
-        // saves the creates context in the request
-        storeRestContext();
-
+        // returns the entity for farther processing
         return result;
     }
 
@@ -102,14 +94,8 @@ public class WarpResteasyInterceptor implements PreProcessInterceptor, PostProce
     @Override
     public void postProcess(ServerResponse serverResponse) {
 
-        // sets the server response
-        if(builder.get() == null) {
-            builder.set(new ResteasyContextBuilder());
-        }
-        builder.get().setServerResponse(serverResponse);
-
-        // saves the the rest context in the request
-        storeRestContext();
+        // captures the server response
+        buildContext(request.get()).setServerResponse(serverResponse).build();
     }
 
     /**
@@ -118,23 +104,10 @@ public class WarpResteasyInterceptor implements PreProcessInterceptor, PostProce
     @Override
     public void write(MessageBodyWriterContext context) throws IOException, WebApplicationException {
 
+        // writes the response
         context.proceed();
-        if(builder.get() == null) {
-            builder.set(new ResteasyContextBuilder());
-        }
-        builder.get().setResponseMediaType(context.getMediaType());
 
-        // saves the the rest context in the request
-        storeRestContext();
-    }
-
-    /**
-     * Stores the rest context in the request as an attribute.
-     */
-    private void storeRestContext() {
-
-        RestContext restContext = builder.get().build();
-
-        request.get().setAttribute(WarpRestCommons.WARP_REST_ATTRIBUTE, restContext);
+        // retrieves the response content type
+        buildContext(request.get()).setResponseMediaType(context.getMediaType()).build();
     }
 }

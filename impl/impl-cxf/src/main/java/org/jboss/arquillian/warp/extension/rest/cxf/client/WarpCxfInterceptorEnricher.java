@@ -23,7 +23,9 @@ import org.jboss.arquillian.warp.extension.rest.spi.WarpRestInterceptorEnricher;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 
 /**
+ * The rest extension responsible for packaging CXF specific interceptors.
  *
+ * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  */
 public class WarpCxfInterceptorEnricher implements LoadableExtension, WarpRestInterceptorEnricher {
 
