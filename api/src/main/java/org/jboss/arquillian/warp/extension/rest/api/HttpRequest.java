@@ -18,13 +18,30 @@
 package org.jboss.arquillian.warp.extension.rest.api;
 
 /**
+ * HTTP request that were received by the server.
  *
+ * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  */
 public interface HttpRequest {
 
+    /**
+     * Retrieves the http method.
+     *
+     * @return the http method.
+     */
     HttpMethod getMethod();
 
+    /**
+     * Retrieves the request content type.
+     *
+     * @return the request content type
+     */
     String getContentType();
 
+    /**
+     * Retrieves the request entity.
+     *
+     * @return the request entity
+     */
     Object getEntity();
 }

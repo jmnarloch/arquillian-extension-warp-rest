@@ -18,11 +18,27 @@
 package org.jboss.arquillian.warp.extension.rest.api;
 
 /**
+ * Represents the captured rest execution context. Gives access to the http request and response allowing to verify the
+ * response statuses or retrieve the request/response entity.
  *
+ * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
+ * @see HttpRequest
+ * @see HttpResponse
+ * @see ArquillianResource
  */
 public interface RestContext {
 
+    /**
+     * Retrieves the http request.
+     *
+     * @return the http request
+     */
     HttpRequest getRequest();
 
+    /**
+     * Retrieves the http response
+     *
+     * @return the http response
+     */
     HttpResponse getResponse();
 }

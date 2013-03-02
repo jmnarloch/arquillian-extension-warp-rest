@@ -18,17 +18,34 @@
 package org.jboss.arquillian.warp.extension.rest.api;
 
 /**
+ * Represents the http method.
  *
+ * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  */
 public enum HttpMethod {
 
+    /**
+     * HTTP GET method.
+     */
     GET,
 
+    /**
+     * HTTP PUT method.
+     */
     PUT,
 
+    /**
+     * HTTP POST method.
+     */
     POST,
 
+    /**
+     * HTTP DELETE method.
+     */
     DELETE,
 
+    /**
+     * HTTP HEAD method.
+     */
     HEAD
 }
