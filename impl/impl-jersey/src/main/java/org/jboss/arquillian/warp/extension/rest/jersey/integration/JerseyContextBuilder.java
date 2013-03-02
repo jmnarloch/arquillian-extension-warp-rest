@@ -26,12 +26,17 @@ import org.jboss.arquillian.warp.extension.rest.api.HttpResponse;
 import org.jboss.arquillian.warp.extension.rest.api.RestContext;
 import org.jboss.arquillian.warp.extension.rest.spi.HttpRequestImpl;
 import org.jboss.arquillian.warp.extension.rest.spi.HttpResponseImpl;
+import org.jboss.arquillian.warp.extension.rest.spi.MultivaluedMapImpl;
 import org.jboss.arquillian.warp.extension.rest.spi.RestContextBuilder;
 import org.jboss.arquillian.warp.extension.rest.spi.RestContextImpl;
 import org.jboss.arquillian.warp.extension.rest.spi.WarpRestCommons;
 
 import javax.servlet.ServletRequest;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * The Jersey specific {@link RestContext} builder.
@@ -132,11 +137,14 @@ final class JerseyContextBuilder implements RestContextBuilder {
     private HttpRequest buildHttpRequest() {
 
         HttpRequestImpl request = new HttpRequestImpl();
-        request.setContentType(getMediaTypeName(containerRequest.getMediaType()));
-        // TODO accessing the request entity in jersey is bizarre
-        // and requires knowing it's type up front, which is not possible at the current stage
-        // request.setEntity(containerRequest.getEntity(Object.class));
-        request.setHttpMethod(getHttpMethod(containerRequest.getMethod()));
+        if (request != null) {
+            request.setContentType(getMediaTypeName(containerRequest.getMediaType()));
+            // TODO accessing the request entity in jersey is bizarre
+            // and requires knowing it's type up front, which is not possible at the current stage
+            // request.setEntity(containerRequest.getEntity(Object.class));
+            request.setMethod(getHttpMethod(containerRequest.getMethod()));
+            request.setHeaders(new MultivaluedMapImpl<String, String>(containerRequest.getRequestHeaders()));
+        }
         return request;
     }
 
@@ -153,6 +161,7 @@ final class JerseyContextBuilder implements RestContextBuilder {
             response.setContentType(getMediaTypeName(containerResponse.getMediaType()));
             response.setStatusCode(containerResponse.getStatus());
             response.setEntity(containerResponse.getEntity());
+            response.setHeaders(getHeaders(containerResponse.getHttpHeaders()));
         }
 
         return response;
@@ -179,6 +188,38 @@ final class JerseyContextBuilder implements RestContextBuilder {
     private static HttpMethod getHttpMethod(String methodName) {
 
         return Enum.valueOf(HttpMethod.class, methodName.toUpperCase());
+    }
+
+    /**
+     * Maps the headers object value map into simple string representation.
+     *
+     * @param httpHeaders the http headers map
+     *
+     * @return the result map
+     */
+    private MultivaluedMap<String, String> getHeaders(MultivaluedMap<String, Object> httpHeaders) {
+
+        MultivaluedMap<String, String> result = new MultivaluedMapImpl<String, String>();
+        for (Map.Entry<String, List<Object>> entry : httpHeaders.entrySet()) {
+            result.put(entry.getKey(), getHttpValueList(entry.getValue()));
+        }
+        return result;
+    }
+
+    /**
+     * Returns list of http headers values.
+     *
+     * @param values the list of values
+     *
+     * @return the list of values
+     */
+    private List<String> getHttpValueList(List<Object> values) {
+
+        List<String> result = new ArrayList<String>();
+        for (Object val : values) {
+            result.add(val.toString());
+        }
+        return result;
     }
 
     /**

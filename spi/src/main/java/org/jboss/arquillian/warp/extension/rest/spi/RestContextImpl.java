@@ -49,7 +49,7 @@ public class RestContextImpl implements RestContext {
      * {@inheritDoc}
      */
     @Override
-    public HttpRequest getRequest() {
+    public HttpRequest getHttpRequest() {
         return httpRequest;
     }
 
@@ -66,7 +66,7 @@ public class RestContextImpl implements RestContext {
      * {@inheritDoc}
      */
     @Override
-    public HttpResponse getResponse() {
+    public HttpResponse getHttpResponse() {
         return httpResponse;
     }
 

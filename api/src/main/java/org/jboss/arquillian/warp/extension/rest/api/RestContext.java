@@ -33,12 +33,12 @@ public interface RestContext {
      *
      * @return the http request
      */
-    HttpRequest getRequest();
+    HttpRequest getHttpRequest();
 
     /**
      * Retrieves the http response
      *
      * @return the http response
      */
-    HttpResponse getResponse();
+    HttpResponse getHttpResponse();
 }

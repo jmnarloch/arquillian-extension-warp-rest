@@ -100,11 +100,11 @@ public class StockServiceAjaxTestCase {
             @AfterServlet
             public void testGetStocks() {
 
-                assertThat(restContext.getRequest().getMethod()).isEqualTo(HttpMethod.GET);
-                assertThat(restContext.getResponse().getStatusCode()).isEqualTo(Response.Status.OK.getStatusCode());
-                assertThat(restContext.getResponse().getContentType()).isEqualTo("application/json");
+                assertThat(restContext.getHttpRequest().getMethod()).isEqualTo(HttpMethod.GET);
+                assertThat(restContext.getHttpResponse().getStatusCode()).isEqualTo(Response.Status.OK.getStatusCode());
+                assertThat(restContext.getHttpResponse().getContentType()).isEqualTo("application/json");
 
-                List list = (List) restContext.getResponse().getEntity();
+                List list = (List) restContext.getHttpResponse().getEntity();
                 assertThat(list.size()).isEqualTo(1);
             }
         });
@@ -133,11 +133,11 @@ public class StockServiceAjaxTestCase {
             @AfterServlet
             public void testGetStock() {
 
-                assertThat(restContext.getRequest().getMethod()).isEqualTo(HttpMethod.GET);
-                assertThat(restContext.getResponse().getStatusCode()).isEqualTo(Response.Status.OK.getStatusCode());
-                assertThat(restContext.getResponse().getContentType()).isEqualTo("application/json");
+                assertThat(restContext.getHttpRequest().getMethod()).isEqualTo(HttpMethod.GET);
+                assertThat(restContext.getHttpResponse().getStatusCode()).isEqualTo(Response.Status.OK.getStatusCode());
+                assertThat(restContext.getHttpResponse().getContentType()).isEqualTo("application/json");
 
-                Stock stock = (Stock) restContext.getResponse().getEntity();
+                Stock stock = (Stock) restContext.getHttpResponse().getEntity();
                 assertThat(stock.getId()).isEqualTo(1L);
                 assertThat(stock.getName()).isEqualTo("Acme");
                 assertThat(stock.getCode()).isEqualTo("ACM");

@@ -20,6 +20,8 @@ package org.jboss.arquillian.warp.extension.rest.spi;
 import org.jboss.arquillian.warp.extension.rest.api.HttpMethod;
 import org.jboss.arquillian.warp.extension.rest.api.HttpRequest;
 
+import javax.ws.rs.core.MultivaluedMap;
+
 /**
  * The default implementation of {@link HttpRequest}.
  *
@@ -43,6 +45,11 @@ public class HttpRequestImpl implements HttpRequest {
     private Object entity;
 
     /**
+     * Represents the map of http headers.
+     */
+    private MultivaluedMap<String, String> headers;
+
+    /**
      * Creates new instance of {@link HttpRequestImpl} class.
      */
     public HttpRequestImpl() {
@@ -62,7 +69,7 @@ public class HttpRequestImpl implements HttpRequest {
      *
      * @param httpMethod the http method
      */
-    public void setHttpMethod(HttpMethod httpMethod) {
+    public void setMethod(HttpMethod httpMethod) {
         this.httpMethod = httpMethod;
     }
 
@@ -98,5 +105,22 @@ public class HttpRequestImpl implements HttpRequest {
      */
     public void setEntity(Object entity) {
         this.entity = entity;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public MultivaluedMap<String, String> getHeaders() {
+        return headers;
+    }
+
+    /**
+     * Sets the http headers.
+     *
+     * @param headers the http headers
+     */
+    public void setHeaders(MultivaluedMap<String, String> headers) {
+        this.headers = headers;
     }
 }

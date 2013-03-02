@@ -19,6 +19,8 @@ package org.jboss.arquillian.warp.extension.rest.spi;
 
 import org.jboss.arquillian.warp.extension.rest.api.HttpResponse;
 
+import javax.ws.rs.core.MultivaluedMap;
+
 /**
  * The default implementation of {@link HttpResponse}.
  *
@@ -40,6 +42,11 @@ public class HttpResponseImpl implements HttpResponse {
      * Represents the response entity.
      */
     private Object entity;
+
+    /**
+     * Represents the http headers.
+     */
+    private MultivaluedMap<String, String> headers;
 
     /**
      * Creates new instance of {@link HttpResponseImpl} class.
@@ -97,5 +104,22 @@ public class HttpResponseImpl implements HttpResponse {
      */
     public void setEntity(Object entity) {
         this.entity = entity;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public MultivaluedMap<String, String> getHeaders() {
+        return headers;
+    }
+
+    /**
+     * Sets the http headers.
+     *
+     * @param headers the http headers
+     */
+    public void setHeaders(MultivaluedMap<String, String> headers) {
+        this.headers = headers;
     }
 }

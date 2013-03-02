@@ -179,9 +179,9 @@ public class StockServiceResourceTestCase {
             @AfterServlet
             public void testGetStock() {
 
-                assertEquals(HttpMethod.GET, restContext.getRequest().getMethod());
-                assertEquals(200, restContext.getResponse().getStatusCode());
-                assertEquals("application/xml", restContext.getResponse().getContentType());
+                assertEquals(HttpMethod.GET, restContext.getHttpRequest().getMethod());
+                assertEquals(200, restContext.getHttpResponse().getStatusCode());
+                assertEquals("application/xml", restContext.getHttpResponse().getContentType());
             }
         });
     }

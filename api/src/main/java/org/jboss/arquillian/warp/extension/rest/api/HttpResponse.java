@@ -17,6 +17,8 @@
  */
 package org.jboss.arquillian.warp.extension.rest.api;
 
+import javax.ws.rs.core.MultivaluedMap;
+
 /**
  * HTTP response that were send by the server back to the client.
  * The response contains the http status code, the mime type of the
@@ -47,4 +49,11 @@ public interface HttpResponse {
      * @return the entity
      */
     Object getEntity();
+
+    /**
+     * Retrieves the request http headers.
+     *
+     * @return the request http headers
+     */
+    MultivaluedMap<String, String> getHeaders();
 }

@@ -17,6 +17,7 @@
  */
 package org.jboss.arquillian.warp.extension.rest.cxf.interceptor;
 
+import org.apache.cxf.jaxrs.ext.MessageContext;
 import org.apache.cxf.message.Message;
 import org.jboss.arquillian.container.spi.client.deployment.Validate;
 import org.jboss.arquillian.warp.extension.rest.api.HttpMethod;
@@ -25,12 +26,17 @@ import org.jboss.arquillian.warp.extension.rest.api.HttpResponse;
 import org.jboss.arquillian.warp.extension.rest.api.RestContext;
 import org.jboss.arquillian.warp.extension.rest.spi.HttpRequestImpl;
 import org.jboss.arquillian.warp.extension.rest.spi.HttpResponseImpl;
+import org.jboss.arquillian.warp.extension.rest.spi.MultivaluedMapImpl;
 import org.jboss.arquillian.warp.extension.rest.spi.RestContextBuilder;
 import org.jboss.arquillian.warp.extension.rest.spi.RestContextImpl;
 import org.jboss.arquillian.warp.extension.rest.spi.WarpRestCommons;
 
 import javax.servlet.ServletRequest;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * The CXF specific {@link RestContext} builder.
@@ -63,6 +69,11 @@ final class CxfContextBuilder implements RestContextBuilder {
      * Represents the response.
      */
     private Response response;
+
+    /**
+     * Represents the message context.
+     */
+    private MessageContext messageContext;
 
     /**
      * Creates new instance of {@link CxfContextBuilder} class.
@@ -130,6 +141,17 @@ final class CxfContextBuilder implements RestContextBuilder {
     }
 
     /**
+     * Sets the message context.
+     *
+     * @param messageContext the message context
+     */
+    public CxfContextBuilder setMessageContext(MessageContext messageContext) {
+
+        this.messageContext = messageContext;
+        return this;
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -150,8 +172,10 @@ final class CxfContextBuilder implements RestContextBuilder {
         if (requestMessage != null) {
             request.setContentType((String) requestMessage.get(Message.CONTENT_TYPE));
             request.setEntity(getRequestEntity());
-            request.setHttpMethod(getRequestMethod((String) requestMessage.get(Message.HTTP_REQUEST_METHOD)));
+            request.setMethod(getRequestMethod((String) requestMessage.get(Message.HTTP_REQUEST_METHOD)));
+            request.setHeaders((MultivaluedMap<String, String>) requestMessage.get(Message.PROTOCOL_HEADERS));
         }
+
         return request;
     }
 
@@ -168,6 +192,8 @@ final class CxfContextBuilder implements RestContextBuilder {
             response.setContentType((String) responseMessage.get(Message.CONTENT_TYPE));
             response.setStatusCode(this.response.getStatus());
             response.setEntity(this.response.getEntity());
+            response.setHeaders(getHeaders((MultivaluedMap<String, Object>)
+                    this.responseMessage.get(Message.PROTOCOL_HEADERS)));
         }
 
         return response;
@@ -194,6 +220,38 @@ final class CxfContextBuilder implements RestContextBuilder {
     private HttpMethod getRequestMethod(String methodName) {
 
         return Enum.valueOf(HttpMethod.class, methodName.toUpperCase());
+    }
+
+    /**
+     * Maps the headers object value map into simple string representation.
+     *
+     * @param httpHeaders the http headers map
+     *
+     * @return the result map
+     */
+    private MultivaluedMap<String, String> getHeaders(MultivaluedMap<String, Object> httpHeaders) {
+
+        MultivaluedMap<String, String> result = new MultivaluedMapImpl<String, String>();
+        for (Map.Entry<String, List<Object>> entry : httpHeaders.entrySet()) {
+            result.put(entry.getKey(), getHttpValueList(entry.getValue()));
+        }
+        return result;
+    }
+
+    /**
+     * Returns list of http headers values.
+     *
+     * @param values the list of values
+     *
+     * @return the list of values
+     */
+    private List<String> getHttpValueList(List<Object> values) {
+
+        List<String> result = new ArrayList<String>();
+        for (Object val : values) {
+            result.add(val.toString());
+        }
+        return result;
     }
 
     /**

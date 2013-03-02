@@ -17,6 +17,8 @@
  */
 package org.jboss.arquillian.warp.extension.rest.api;
 
+import javax.ws.rs.core.MultivaluedMap;
+
 /**
  * HTTP request that were received by the server.
  *
@@ -44,4 +46,11 @@ public interface HttpRequest {
      * @return the request entity
      */
     Object getEntity();
+
+    /**
+     * Retrieves the request http headers.
+     *
+     * @return the request http headers
+     */
+    MultivaluedMap<String, String> getHeaders();
 }

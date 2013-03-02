@@ -52,7 +52,7 @@ public class WarpResteasyInterceptor implements PreProcessInterceptor, PostProce
         MessageBodyReaderInterceptor, MessageBodyWriterInterceptor {
 
     /**
-     * Stores the  for the current thread.
+     * Stores the for the current thread.
      */
     private static final ThreadLocal<HttpRequest> request = new InheritableThreadLocal<HttpRequest>();
 
@@ -82,7 +82,9 @@ public class WarpResteasyInterceptor implements PreProcessInterceptor, PostProce
         Object result = context.proceed();
 
         // appends the entity to the context
-        buildContext(request.get()).setRequestEntity(result).build();
+        buildContext(request.get())
+                .setRequestEntity(result)
+                .build();
 
         // returns the entity for farther processing
         return result;
@@ -95,7 +97,9 @@ public class WarpResteasyInterceptor implements PreProcessInterceptor, PostProce
     public void postProcess(ServerResponse serverResponse) {
 
         // captures the server response
-        buildContext(request.get()).setServerResponse(serverResponse).build();
+        buildContext(request.get())
+                .setServerResponse(serverResponse)
+                .build();
     }
 
     /**
@@ -108,6 +112,8 @@ public class WarpResteasyInterceptor implements PreProcessInterceptor, PostProce
         context.proceed();
 
         // retrieves the response content type
-        buildContext(request.get()).setResponseMediaType(context.getMediaType()).build();
+        buildContext(request.get())
+                .setResponseMediaType(context.getMediaType())
+                .build();
     }
 }

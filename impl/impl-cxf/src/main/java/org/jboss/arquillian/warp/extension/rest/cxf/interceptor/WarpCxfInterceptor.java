@@ -60,6 +60,9 @@ public class WarpCxfInterceptor implements RequestHandler, ResponseHandler {
     public void setMessageContext(MessageContext messageContext) {
 
         servletRequest.set(messageContext.getHttpServletRequest());
+
+        buildContext(servletRequest.get())
+                .setMessageContext(messageContext);
     }
 
     /**

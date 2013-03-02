@@ -24,12 +24,17 @@ import org.jboss.arquillian.warp.extension.rest.api.HttpResponse;
 import org.jboss.arquillian.warp.extension.rest.api.RestContext;
 import org.jboss.arquillian.warp.extension.rest.spi.HttpRequestImpl;
 import org.jboss.arquillian.warp.extension.rest.spi.HttpResponseImpl;
+import org.jboss.arquillian.warp.extension.rest.spi.MultivaluedMapImpl;
 import org.jboss.arquillian.warp.extension.rest.spi.RestContextBuilder;
 import org.jboss.arquillian.warp.extension.rest.spi.RestContextImpl;
 import org.jboss.arquillian.warp.extension.rest.spi.WarpRestCommons;
 import org.jboss.resteasy.core.ServerResponse;
 
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * The RestEasy specific {@link RestContext} builder.
@@ -149,9 +154,12 @@ final class ResteasyContextBuilder implements RestContextBuilder {
     private HttpRequest buildHttpRequest() {
 
         HttpRequestImpl request = new HttpRequestImpl();
-        request.setContentType(getMediaTypeName(httpRequest.getHttpHeaders().getMediaType()));
-        request.setEntity(this.requestEntity);
-        request.setHttpMethod(getHttpMethod(httpRequest.getHttpMethod()));
+        if (httpRequest != null) {
+            request.setContentType(getMediaTypeName(httpRequest.getHttpHeaders().getMediaType()));
+            request.setEntity(this.requestEntity);
+            request.setMethod(getHttpMethod(httpRequest.getHttpMethod()));
+            request.setHeaders(new MultivaluedMapImpl<String, String>(httpRequest.getHttpHeaders().getRequestHeaders()));
+        }
         return request;
     }
 
@@ -163,11 +171,12 @@ final class ResteasyContextBuilder implements RestContextBuilder {
     private HttpResponse buildHttpResponse() {
 
         HttpResponseImpl response = new HttpResponseImpl();
-        response.setContentType(getMediaTypeName(responseMediaType));
 
         if (serverResponse != null) {
+            response.setContentType(getMediaTypeName(responseMediaType));
             response.setStatusCode(serverResponse.getStatus());
             response.setEntity(serverResponse.getEntity());
+            response.setHeaders(getHeaders(serverResponse.getMetadata()));
         }
 
         return response;
@@ -198,7 +207,41 @@ final class ResteasyContextBuilder implements RestContextBuilder {
     }
 
     /**
-     * Retrieves the {@link RestContext} stored in the request. <p/> If non exists, then new one is being created.
+     * Maps the headers object value map into simple string representation.
+     *
+     * @param httpHeaders the http headers map
+     *
+     * @return the result map
+     */
+    private MultivaluedMap<String, String> getHeaders(MultivaluedMap<String, Object> httpHeaders) {
+
+        MultivaluedMap<String, String> result = new MultivaluedMapImpl<String, String>();
+        for (Map.Entry<String, List<Object>> entry : httpHeaders.entrySet()) {
+            result.put(entry.getKey(), getHttpValueList(entry.getValue()));
+        }
+        return result;
+    }
+
+    /**
+     * Returns list of http headers values.
+     *
+     * @param values the list of values
+     *
+     * @return the list of values
+     */
+    private List<String> getHttpValueList(List<Object> values) {
+
+        List<String> result = new ArrayList<String>();
+        for (Object val : values) {
+            result.add(val.toString());
+        }
+        return result;
+    }
+
+    /**
+     * Retrieves the {@link RestContext} stored in the request.
+     * <p/>
+     * If non exists, then new one is being created.
      *
      * @return the rest context
      */
