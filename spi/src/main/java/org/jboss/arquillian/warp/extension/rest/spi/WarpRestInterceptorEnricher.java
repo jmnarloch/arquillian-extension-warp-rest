@@ -20,7 +20,10 @@ package org.jboss.arquillian.warp.extension.rest.spi;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 
 /**
+ * An extension that is will be implemented by concreate implementations and allows it to enrich the test web archive
+ * with required classes.
  *
+ * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  */
 public interface WarpRestInterceptorEnricher {
 

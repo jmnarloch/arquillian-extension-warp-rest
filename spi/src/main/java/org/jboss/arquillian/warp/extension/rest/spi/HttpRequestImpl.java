@@ -21,7 +21,9 @@ import org.jboss.arquillian.warp.extension.rest.api.HttpMethod;
 import org.jboss.arquillian.warp.extension.rest.api.HttpRequest;
 
 /**
+ * The default implementation of {@link HttpRequest}.
  *
+ * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  */
 public class HttpRequestImpl implements HttpRequest {
 

@@ -18,9 +18,15 @@
 package org.jboss.arquillian.warp.extension.rest.spi;
 
 /**
+ * An utility class that defines constants used in this extension.
  *
+ * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  */
 public class WarpRestCommons {
 
+    /**
+     * Represents the name of the attribute which is used for storing the {@link
+     * org.jboss.arquillian.warp.extension.rest.api.RestContext} in the servlet request.
+     */
     public static final String WARP_REST_ATTRIBUTE = "org.jboss.arquillian.warp.extension.rest.spi.WARP_REST_ATTRIBUTE";
 }

@@ -20,7 +20,9 @@ package org.jboss.arquillian.warp.extension.rest.spi;
 import org.jboss.arquillian.warp.extension.rest.api.HttpResponse;
 
 /**
+ * The default implementation of {@link HttpResponse}.
  *
+ * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  */
 public class HttpResponseImpl implements HttpResponse {
 

@@ -17,12 +17,15 @@
  */
 package org.jboss.arquillian.warp.extension.rest.spi;
 
-import org.jboss.arquillian.warp.extension.rest.api.RestContext;
-
 /**
+ * Rest context builder.
  *
+ * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  */
 public interface RestContextBuilder {
 
+    /**
+     * Builds the context.
+     */
     void build();
 }

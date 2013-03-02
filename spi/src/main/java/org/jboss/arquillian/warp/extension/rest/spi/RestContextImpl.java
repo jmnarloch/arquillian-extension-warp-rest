@@ -22,7 +22,9 @@ import org.jboss.arquillian.warp.extension.rest.api.HttpResponse;
 import org.jboss.arquillian.warp.extension.rest.api.RestContext;
 
 /**
+ * The default implementation of {@link RestContext}.
  *
+ * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  */
 public class RestContextImpl implements RestContext {
 
