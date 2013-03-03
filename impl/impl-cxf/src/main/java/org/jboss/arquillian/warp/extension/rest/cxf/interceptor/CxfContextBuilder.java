@@ -50,6 +50,11 @@ import java.util.Map;
 final class CxfContextBuilder implements RestContextBuilder {
 
     /**
+     * Represents the name of the attribute used for storing the builder in the context.
+     */
+    private static final String BUILDER_ATTRIBUTE_NAME = CxfContextBuilder.class.getName();
+
+    /**
      * Represents the servlet request.
      */
     private final ServletRequest servletRequest;
@@ -274,6 +279,25 @@ final class CxfContextBuilder implements RestContextBuilder {
             result.add(val.toString());
         }
         return result;
+    }
+
+    /**
+     * Retrieves the builder from the request.
+     *
+     * @return the {@link CxfContextBuilder} instance
+     */
+    private static CxfContextBuilder getCxfContextBuilder(ServletRequest servletRequest) {
+
+        CxfContextBuilder resteasyContextBuilder = (CxfContextBuilder)
+                servletRequest.getAttribute(BUILDER_ATTRIBUTE_NAME);
+
+        if(resteasyContextBuilder == null) {
+
+            resteasyContextBuilder = new CxfContextBuilder(servletRequest);
+            servletRequest.setAttribute(BUILDER_ATTRIBUTE_NAME, resteasyContextBuilder);
+        }
+
+        return resteasyContextBuilder;
     }
 
     /**

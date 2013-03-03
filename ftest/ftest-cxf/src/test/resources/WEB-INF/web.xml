@@ -29,10 +29,6 @@
             <param-name>javax.ws.rs.Application</param-name>
             <param-value>org.jboss.arquillian.quickstart.cxf.application.StockApplication</param-value>
         </init-param>
-        <!--
-           This parameter is recognized only starting from CXF 2.3.1
-           @ApplicationPath value will be ignored if this parameter is set to true
-        -->
         <init-param>
             <param-name>jaxrs.application.address.ignore</param-name>
             <param-value>false</param-value>

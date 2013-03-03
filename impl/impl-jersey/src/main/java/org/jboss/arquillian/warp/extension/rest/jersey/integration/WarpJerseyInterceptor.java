@@ -44,21 +44,13 @@ import static org.jboss.arquillian.warp.extension.rest.jersey.integration.Jersey
 public class WarpJerseyInterceptor implements ContainerRequestFilter, ContainerResponseFilter {
 
     /**
-     * Stores the http request within the current thread.
-     */
-    private static final ThreadLocal<HttpServletRequest> servletRequest =
-            new InheritableThreadLocal<HttpServletRequest>();
-
-    /**
-     * Sets the {@link HttpServletRequest} instance.
+     * Injected {@link HttpServletRequest}.
      *
-     * @param request the request instance
+     * Note: according to the jersey spec this should be a thread local copy of the request.
+     * Setter injection is not supported, this is the only way to enquire the {@link HttpServletRequest}.
      */
     @Context
-    public void setHttpServletRequest(HttpServletRequest request) {
-
-        servletRequest.set(request);
-    }
+    private HttpServletRequest request;
 
     /**
      * {@inheritDoc}
@@ -67,7 +59,7 @@ public class WarpJerseyInterceptor implements ContainerRequestFilter, ContainerR
     public ContainerRequest filter(ContainerRequest containerRequest) {
 
         // stores the container request
-        buildContext(servletRequest.get())
+        buildContext(request)
                 .setContainerRequest(containerRequest)
                 .build();
 
@@ -82,7 +74,7 @@ public class WarpJerseyInterceptor implements ContainerRequestFilter, ContainerR
     public ContainerResponse filter(ContainerRequest containerRequest, ContainerResponse containerResponse) {
 
         // stores the container request and response
-        buildContext(servletRequest.get())
+        buildContext(request)
                 .setContainerRequest(containerRequest)
                 .setContainerResponse(containerResponse)
                 .build();

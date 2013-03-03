@@ -50,6 +50,11 @@ import java.util.Map;
 final class JerseyContextBuilder implements RestContextBuilder {
 
     /**
+     * Represents the name of the attribute used for storing the builder in the context.
+     */
+    private static final String BUILDER_ATTRIBUTE_NAME = JerseyContextBuilder.class.getName();
+
+    /**
      * Represents the servlet request.
      */
     private final ServletRequest servletRequest;
@@ -94,7 +99,7 @@ final class JerseyContextBuilder implements RestContextBuilder {
      */
     public static JerseyContextBuilder buildContext(ServletRequest servletRequest) {
 
-        return new JerseyContextBuilder(servletRequest);
+        return getJerseyContextBuilder(servletRequest);
     }
 
     /**
@@ -242,6 +247,25 @@ final class JerseyContextBuilder implements RestContextBuilder {
             result.add(val.toString());
         }
         return result;
+    }
+
+    /**
+     * Retrieves the builder from the request.
+     *
+     * @return the {@link JerseyContextBuilder} instance
+     */
+    private static JerseyContextBuilder getJerseyContextBuilder(ServletRequest servletRequest) {
+
+        JerseyContextBuilder resteasyContextBuilder = (JerseyContextBuilder)
+                servletRequest.getAttribute(BUILDER_ATTRIBUTE_NAME);
+
+        if(resteasyContextBuilder == null) {
+
+            resteasyContextBuilder = new JerseyContextBuilder(servletRequest);
+            servletRequest.setAttribute(BUILDER_ATTRIBUTE_NAME, resteasyContextBuilder);
+        }
+
+        return resteasyContextBuilder;
     }
 
     /**

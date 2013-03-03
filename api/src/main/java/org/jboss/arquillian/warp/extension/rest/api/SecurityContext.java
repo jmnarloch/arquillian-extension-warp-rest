@@ -20,7 +20,7 @@ package org.jboss.arquillian.warp.extension.rest.api;
 import java.security.Principal;
 
 /**
- * The security context of the given resource.
+ * The security context of the given request.
  *
  * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  */

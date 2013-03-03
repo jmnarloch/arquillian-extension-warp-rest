@@ -51,8 +51,7 @@ public class WarpCxfInterceptor implements RequestHandler, ResponseHandler {
     /**
      * Represents the servlet request.
      */
-    private static final ThreadLocal<HttpServletRequest> servletRequest =
-            new InheritableThreadLocal<HttpServletRequest>();
+    private static final ThreadLocal<HttpServletRequest> servletRequest = new ThreadLocal<HttpServletRequest>();
 
     /**
      * Sets the message context.

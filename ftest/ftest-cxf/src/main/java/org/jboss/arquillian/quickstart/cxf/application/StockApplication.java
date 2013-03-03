@@ -38,13 +38,9 @@ public class StockApplication extends Application {
      */
     @Override
     public Set<Object> getSingletons() {
-        JSONProvider provider = new JSONProvider();
-        provider.setSerializeAsArray(true);
-        provider.setConvention("badgerfish");
 
         Set<Object> singletons = new HashSet<Object>();
         singletons.add(new StockServiceResource());
-        singletons.add(provider);
         return singletons;
     }
 
@@ -55,6 +51,7 @@ public class StockApplication extends Application {
     public Set<Class<?>> getClasses() {
         Set<Class<?>> classes = new HashSet<Class<?>>();
         classes.add(WarpCxfInterceptor.class);
+        classes.add(JSONProvider.class);
         return classes;
     }
 }

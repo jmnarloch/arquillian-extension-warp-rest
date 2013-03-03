@@ -114,7 +114,6 @@ public class StockServiceResourceTestCase {
 
         JSONProvider provider = new JSONProvider();
         provider.setSerializeAsArray(true);
-        provider.setConvention("badgerfish");
 
         stockService = JAXRSClientFactory.create(contextPath + "app/rest/",
                 StockService.class, Arrays.asList(provider));

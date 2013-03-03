@@ -38,7 +38,7 @@
         <!-- JAX-RS implementations -->
         <version.resteasy>2.3.4.Final</version.resteasy>
         <version.jersey>1.17</version.jersey>
-        <version.cxf>2.6.6</version.cxf>
+        <version.cxf>2.7.2</version.cxf>
         <version.springframework>3.2.1.RELEASE</version.springframework>
 
         <!-- Tests -->

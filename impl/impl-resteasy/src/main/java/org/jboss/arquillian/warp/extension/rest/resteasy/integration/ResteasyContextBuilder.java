@@ -48,6 +48,11 @@ import java.util.Map;
 final class ResteasyContextBuilder implements RestContextBuilder {
 
     /**
+     * Represents the name of the attribute used for storing the builder in the context.
+     */
+    private static final String BUILDER_ATTRIBUTE_NAME = ResteasyContextBuilder.class.getName();
+
+    /**
      * Represents the http request.
      */
     private final org.jboss.resteasy.spi.HttpRequest httpRequest;
@@ -103,7 +108,7 @@ final class ResteasyContextBuilder implements RestContextBuilder {
      */
     public static ResteasyContextBuilder buildContext(org.jboss.resteasy.spi.HttpRequest httpRequest) {
 
-        return new ResteasyContextBuilder(httpRequest);
+        return getRestContextBuilder(httpRequest);
     }
 
     /**
@@ -273,6 +278,25 @@ final class ResteasyContextBuilder implements RestContextBuilder {
             result.add(val.toString());
         }
         return result;
+    }
+
+    /**
+     * Retrieves the builder from the request.
+     *
+     * @return the {@link ResteasyContextBuilder} instance
+     */
+    private static ResteasyContextBuilder getRestContextBuilder(org.jboss.resteasy.spi.HttpRequest httpRequest) {
+
+        ResteasyContextBuilder resteasyContextBuilder = (ResteasyContextBuilder)
+                httpRequest.getAttribute(BUILDER_ATTRIBUTE_NAME);
+
+        if(resteasyContextBuilder == null) {
+
+            resteasyContextBuilder = new ResteasyContextBuilder(httpRequest);
+            httpRequest.setAttribute(BUILDER_ATTRIBUTE_NAME, resteasyContextBuilder);
+        }
+
+        return resteasyContextBuilder;
     }
 
     /**

@@ -59,7 +59,7 @@ public class WarpResteasyInterceptor implements PreProcessInterceptor, PostProce
     /**
      * Stores the http request within the worker thread.
      */
-    private static final ThreadLocal<HttpRequest> request = new InheritableThreadLocal<HttpRequest>();
+    private static final ThreadLocal<HttpRequest> request = new ThreadLocal<HttpRequest>();
 
     /**
      * Stores the security context withing the worker thread.
