@@ -20,10 +20,8 @@ package org.jboss.arquillian.warp.extension.rest.api;
 import javax.ws.rs.core.MultivaluedMap;
 
 /**
- * HTTP response that were send by the server back to the client.
- * The response contains the http status code, the mime type of the
- * response and gives access to the entity that has been returned
- * from the service.
+ * HTTP response that were send by the server back to the client. The response contains the http status code, the mime
+ * type of the response and gives access to the entity that has been returned from the service.
  *
  * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  */

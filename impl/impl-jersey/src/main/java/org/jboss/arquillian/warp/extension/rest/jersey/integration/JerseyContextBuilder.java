@@ -131,6 +131,7 @@ final class JerseyContextBuilder implements RestContextBuilder {
 
         restContext.setHttpRequest(buildHttpRequest());
         restContext.setHttpResponse(buildHttpResponse());
+        restContext.setResponse(containerResponse != null ? containerResponse.getResponse() : null);
         restContext.setSecurityContext(buildSecurityContext());
     }
 

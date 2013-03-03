@@ -163,6 +163,7 @@ final class CxfContextBuilder implements RestContextBuilder {
 
         restContext.setHttpRequest(buildHttpRequest());
         restContext.setHttpResponse(buildHttpResponse());
+        restContext.setResponse(response);
         restContext.setSecurityContext(buildSecurityContext());
     }
 

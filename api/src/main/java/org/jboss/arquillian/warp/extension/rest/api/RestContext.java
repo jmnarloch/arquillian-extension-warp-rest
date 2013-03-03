@@ -17,10 +17,13 @@
  */
 package org.jboss.arquillian.warp.extension.rest.api;
 
+import javax.ws.rs.core.Response;
+
 /**
  * Represents the captured rest execution context. Gives access to the http request and response allowing to verify the
  * response statuses or retrieve the request/response entity. The rest context can be injected into Warp {@link
- * Inspection} by using {@link ArquillianResource} injection.
+ * Inspection} by using {@link ArquillianResource} injection. It's possible to access the service response through
+ * {@link #getResponse()}.
  *
  * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  * @see HttpRequest
@@ -42,6 +45,13 @@ public interface RestContext {
      * @return the http response
      */
     HttpResponse getHttpResponse();
+
+    /**
+     * Retrieves the service response.
+     *
+     * @return the service response
+     */
+    Response getResponse();
 
     /**
      * Retrieves the security context.

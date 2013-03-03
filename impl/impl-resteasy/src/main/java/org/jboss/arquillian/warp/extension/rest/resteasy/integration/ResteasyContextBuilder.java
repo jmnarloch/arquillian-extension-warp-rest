@@ -166,6 +166,7 @@ final class ResteasyContextBuilder implements RestContextBuilder {
 
         restContext.setHttpRequest(buildHttpRequest());
         restContext.setHttpResponse(buildHttpResponse());
+        restContext.setResponse(serverResponse);
         restContext.setSecurityContext(buildSecurityContext());
     }
 
