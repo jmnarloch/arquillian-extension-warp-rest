@@ -24,11 +24,13 @@ import org.jboss.arquillian.warp.extension.rest.api.HttpMethod;
 import org.jboss.arquillian.warp.extension.rest.api.HttpRequest;
 import org.jboss.arquillian.warp.extension.rest.api.HttpResponse;
 import org.jboss.arquillian.warp.extension.rest.api.RestContext;
+import org.jboss.arquillian.warp.extension.rest.api.SecurityContext;
 import org.jboss.arquillian.warp.extension.rest.spi.HttpRequestImpl;
 import org.jboss.arquillian.warp.extension.rest.spi.HttpResponseImpl;
 import org.jboss.arquillian.warp.extension.rest.spi.MultivaluedMapImpl;
 import org.jboss.arquillian.warp.extension.rest.spi.RestContextBuilder;
 import org.jboss.arquillian.warp.extension.rest.spi.RestContextImpl;
+import org.jboss.arquillian.warp.extension.rest.spi.SecurityContextImpl;
 import org.jboss.arquillian.warp.extension.rest.spi.WarpRestCommons;
 
 import javax.servlet.ServletRequest;
@@ -40,6 +42,8 @@ import java.util.Map;
 
 /**
  * The CXF specific {@link RestContext} builder.
+ *
+ * <p><strong>Thread-safety:</strong>This class is mutable and not thread safe.</p>
  *
  * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  */
@@ -159,6 +163,7 @@ final class CxfContextBuilder implements RestContextBuilder {
 
         restContext.setHttpRequest(buildHttpRequest());
         restContext.setHttpResponse(buildHttpResponse());
+        restContext.setSecurityContext(buildSecurityContext());
     }
 
     /**
@@ -197,6 +202,22 @@ final class CxfContextBuilder implements RestContextBuilder {
         }
 
         return response;
+    }
+
+    /**
+     * Builds the {@link SecurityContext}.
+     *
+     * @return the {@link SecurityContext}
+     */
+    private SecurityContext buildSecurityContext() {
+
+        SecurityContextImpl securityContext = new SecurityContextImpl();
+
+        if(messageContext != null && messageContext.getSecurityContext() != null) {
+            securityContext.setPrincipal(messageContext.getSecurityContext().getUserPrincipal());
+            securityContext.setAuthenticationScheme(messageContext.getSecurityContext().getAuthenticationScheme());
+        }
+        return securityContext;
     }
 
     /**

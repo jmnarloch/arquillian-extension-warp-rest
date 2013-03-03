@@ -35,13 +35,16 @@ import static org.jboss.arquillian.warp.extension.rest.jersey.integration.Jersey
  * <p/>
  * Implementation captures the state and stores it the {@link RestContext} which is being bound to executing request.
  *
+ * <p><strong>Thread-safety:</strong>This class can be considered as a thread safe. The class is mutable, but since
+ * it's using {@link ThreadLocal} field for storing it's context it can be considered as a thread safe.</p>
+ *
  * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  */
 @Provider
 public class WarpJerseyInterceptor implements ContainerRequestFilter, ContainerResponseFilter {
 
     /**
-     * Represents the {@link HttpServletRequest}.
+     * Stores the http request within the current thread.
      */
     private static final ThreadLocal<HttpServletRequest> servletRequest =
             new InheritableThreadLocal<HttpServletRequest>();

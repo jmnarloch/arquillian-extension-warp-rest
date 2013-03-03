@@ -22,11 +22,13 @@ import org.jboss.arquillian.warp.extension.rest.api.HttpMethod;
 import org.jboss.arquillian.warp.extension.rest.api.HttpRequest;
 import org.jboss.arquillian.warp.extension.rest.api.HttpResponse;
 import org.jboss.arquillian.warp.extension.rest.api.RestContext;
+import org.jboss.arquillian.warp.extension.rest.api.SecurityContext;
 import org.jboss.arquillian.warp.extension.rest.spi.HttpRequestImpl;
 import org.jboss.arquillian.warp.extension.rest.spi.HttpResponseImpl;
 import org.jboss.arquillian.warp.extension.rest.spi.MultivaluedMapImpl;
 import org.jboss.arquillian.warp.extension.rest.spi.RestContextBuilder;
 import org.jboss.arquillian.warp.extension.rest.spi.RestContextImpl;
+import org.jboss.arquillian.warp.extension.rest.spi.SecurityContextImpl;
 import org.jboss.arquillian.warp.extension.rest.spi.WarpRestCommons;
 import org.jboss.resteasy.core.ServerResponse;
 
@@ -38,6 +40,8 @@ import java.util.Map;
 
 /**
  * The RestEasy specific {@link RestContext} builder.
+ *
+ * <p><strong>Thread-safety:</strong>This class is mutable and not thread safe.</p>
  *
  * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  */
@@ -67,6 +71,11 @@ final class ResteasyContextBuilder implements RestContextBuilder {
      * Resteasy server response.
      */
     private ServerResponse serverResponse;
+
+    /**
+     * Represents the security context.
+     */
+    private javax.ws.rs.core.SecurityContext securityContext;
 
     /**
      * <p>Creates new instance of {@link ResteasyContextBuilder}.</p>
@@ -137,6 +146,19 @@ final class ResteasyContextBuilder implements RestContextBuilder {
     }
 
     /**
+     * Sets the security context
+     *
+     * @param securityContext the security context
+     *
+     * @return the rest context builder
+     */
+    public ResteasyContextBuilder setSecurityContext(javax.ws.rs.core.SecurityContext securityContext) {
+
+        this.securityContext = securityContext;
+        return this;
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -144,6 +166,7 @@ final class ResteasyContextBuilder implements RestContextBuilder {
 
         restContext.setHttpRequest(buildHttpRequest());
         restContext.setHttpResponse(buildHttpResponse());
+        restContext.setSecurityContext(buildSecurityContext());
     }
 
     /**
@@ -171,15 +194,28 @@ final class ResteasyContextBuilder implements RestContextBuilder {
     private HttpResponse buildHttpResponse() {
 
         HttpResponseImpl response = new HttpResponseImpl();
-
         if (serverResponse != null) {
             response.setContentType(getMediaTypeName(responseMediaType));
             response.setStatusCode(serverResponse.getStatus());
             response.setEntity(serverResponse.getEntity());
             response.setHeaders(getHeaders(serverResponse.getMetadata()));
         }
-
         return response;
+    }
+
+    /**
+     * Builds the {@link SecurityContext}.
+     *
+     * @return the {@link SecurityContext}
+     */
+    private SecurityContext buildSecurityContext() {
+
+        SecurityContextImpl securityContext = new SecurityContextImpl();
+        if(this.securityContext != null) {
+            securityContext.setPrincipal(this.securityContext.getUserPrincipal());
+            securityContext.setAuthenticationScheme(this.securityContext.getAuthenticationScheme());
+        }
+        return securityContext;
     }
 
     /**

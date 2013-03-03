@@ -17,36 +17,26 @@
  */
 package org.jboss.arquillian.warp.extension.rest.api;
 
+import java.security.Principal;
+
 /**
- * Represents the captured rest execution context. Gives access to the http request and response allowing to verify the
- * response statuses or retrieve the request/response entity. The rest context can be injected into Warp {@link
- * Inspection} by using {@link ArquillianResource} injection.
+ * The security context of the given resource.
  *
  * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
- * @see HttpRequest
- * @see HttpResponse
- * @see ArquillianResource
  */
-public interface RestContext {
+public interface SecurityContext {
 
     /**
-     * Retrieves the http request.
+     * Retrieves the principal.
      *
-     * @return the http request
+     * @return the principal
      */
-    HttpRequest getHttpRequest();
+    Principal getPrincipal();
 
     /**
-     * Retrieves the http response
+     * Retrieves the authentication scheme.
      *
-     * @return the http response
+     * @return the authentication scheme
      */
-    HttpResponse getHttpResponse();
-
-    /**
-     * Retrieves the security context.
-     *
-     * @return security context
-     */
-    SecurityContext getSecurityContext();
+    String getAuthenticationScheme();
 }

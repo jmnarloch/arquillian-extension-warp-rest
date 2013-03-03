@@ -20,6 +20,7 @@ package org.jboss.arquillian.warp.extension.rest.spi;
 import org.jboss.arquillian.warp.extension.rest.api.HttpRequest;
 import org.jboss.arquillian.warp.extension.rest.api.HttpResponse;
 import org.jboss.arquillian.warp.extension.rest.api.RestContext;
+import org.jboss.arquillian.warp.extension.rest.api.SecurityContext;
 
 /**
  * The default implementation of {@link RestContext}.
@@ -37,6 +38,11 @@ public class RestContextImpl implements RestContext {
      * Represents the http response.
      */
     private HttpResponse httpResponse;
+
+    /**
+     * Represents the security context.
+     */
+    private SecurityContext securityContext;
 
     /**
      * Creates new instance of {@link RestContextImpl} class.
@@ -77,5 +83,22 @@ public class RestContextImpl implements RestContext {
      */
     public void setHttpResponse(HttpResponse httpResponse) {
         this.httpResponse = httpResponse;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public SecurityContext getSecurityContext() {
+        return securityContext;
+    }
+
+    /**
+     * Sets the security context.
+     *
+     * @param securityContext the security context
+     */
+    public void setSecurityContext(SecurityContext securityContext) {
+        this.securityContext = securityContext;
     }
 }
