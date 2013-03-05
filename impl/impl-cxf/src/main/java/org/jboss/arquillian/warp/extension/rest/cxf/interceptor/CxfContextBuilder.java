@@ -107,7 +107,7 @@ final class CxfContextBuilder implements RestContextBuilder {
      */
     public static CxfContextBuilder buildContext(ServletRequest servletRequest) {
 
-        return new CxfContextBuilder(servletRequest);
+        return getCxfContextBuilder(servletRequest);
     }
 
     /**
@@ -184,7 +184,7 @@ final class CxfContextBuilder implements RestContextBuilder {
             request.setContentType((String) requestMessage.get(Message.CONTENT_TYPE));
             request.setEntity(getRequestEntity());
             request.setMethod(getRequestMethod((String) requestMessage.get(Message.HTTP_REQUEST_METHOD)));
-            request.setHeaders((MultivaluedMap<String, String>) requestMessage.get(Message.PROTOCOL_HEADERS));
+//            request.setHeaders((MultivaluedMap<String, String>) requestMessage.get(Message.PROTOCOL_HEADERS));
         }
 
         return request;
@@ -203,8 +203,8 @@ final class CxfContextBuilder implements RestContextBuilder {
             response.setContentType((String) responseMessage.get(Message.CONTENT_TYPE));
             response.setStatusCode(this.response.getStatus());
             response.setEntity(this.response.getEntity());
-            response.setHeaders(getHeaders((MultivaluedMap<String, Object>)
-                    this.responseMessage.get(Message.PROTOCOL_HEADERS)));
+//            response.setHeaders(getHeaders((MultivaluedMap<String, Object>)
+//                    this.responseMessage.get(Message.PROTOCOL_HEADERS)));
         }
 
         return response;
@@ -288,16 +288,16 @@ final class CxfContextBuilder implements RestContextBuilder {
      */
     private static CxfContextBuilder getCxfContextBuilder(ServletRequest servletRequest) {
 
-        CxfContextBuilder resteasyContextBuilder = (CxfContextBuilder)
+        CxfContextBuilder cxfContextBuilder = (CxfContextBuilder)
                 servletRequest.getAttribute(BUILDER_ATTRIBUTE_NAME);
 
-        if(resteasyContextBuilder == null) {
+        if(cxfContextBuilder == null) {
 
-            resteasyContextBuilder = new CxfContextBuilder(servletRequest);
-            servletRequest.setAttribute(BUILDER_ATTRIBUTE_NAME, resteasyContextBuilder);
+            cxfContextBuilder = new CxfContextBuilder(servletRequest);
+            servletRequest.setAttribute(BUILDER_ATTRIBUTE_NAME, cxfContextBuilder);
         }
 
-        return resteasyContextBuilder;
+        return cxfContextBuilder;
     }
 
     /**

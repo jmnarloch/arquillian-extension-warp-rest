@@ -20,15 +20,12 @@ package org.jboss.arquillian.quickstart.jersey.service.rs;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.OverProtocol;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.arquillian.quickstart.jersey.application.StockApplication;
 import org.jboss.arquillian.quickstart.jersey.model.Stock;
-import org.jboss.arquillian.quickstart.jersey.service.StockService;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.arquillian.warp.Activity;
 import org.jboss.arquillian.warp.Inspection;
@@ -38,26 +35,22 @@ import org.jboss.arquillian.warp.extension.rest.api.HttpMethod;
 import org.jboss.arquillian.warp.extension.rest.api.RestContext;
 import org.jboss.arquillian.warp.servlet.AfterServlet;
 import org.jboss.shrinkwrap.api.Archive;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.jboss.shrinkwrap.resolver.api.DependencyResolvers;
-import org.jboss.shrinkwrap.resolver.api.maven.MavenDependencyResolver;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.io.File;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.util.Date;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 /**
+ * The test case that uses Jersey client API for calling the REST test.
  *
+ * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  */
 @WarpTest
 @RunWith(Arquillian.class)
@@ -72,20 +65,7 @@ public class StockServiceResourceTestCase {
     @OverProtocol("Servlet 3.0")
     public static Archive createTestArchive() {
 
-        File[] libs = DependencyResolvers.use(MavenDependencyResolver.class)
-                .loadMetadataFromPom("pom.xml")
-                .artifacts("org.easytesting:fest-assert")
-                .artifacts("com.sun.jersey:jersey-json")
-                .artifacts("com.sun.jersey:jersey-client")
-                .artifacts("com.sun.jersey:jersey-server")
-                .artifacts("com.sun.jersey:jersey-servlet")
-                .exclusion("javax.servlet:*")
-                .resolveAsFiles();
-
-        return ShrinkWrap.create(WebArchive.class)
-                .addClasses(StockApplication.class, Stock.class, StockService.class, StockServiceResource.class)
-                .addAsWebInfResource("WEB-INF/web.xml")
-                .addAsLibraries(libs);
+        return Deployments.createDeployment();
     }
 
     /**

@@ -21,7 +21,6 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.OverProtocol;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.arquillian.quickstart.resteasy.application.StockApplication;
 import org.jboss.arquillian.quickstart.resteasy.model.Stock;
 import org.jboss.arquillian.quickstart.resteasy.service.StockService;
 import org.jboss.arquillian.test.api.ArquillianResource;
@@ -38,17 +37,12 @@ import org.jboss.resteasy.client.ProxyFactory;
 import org.jboss.resteasy.plugins.providers.RegisterBuiltin;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.jboss.shrinkwrap.api.Archive;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.jboss.shrinkwrap.resolver.api.DependencyResolvers;
-import org.jboss.shrinkwrap.resolver.api.maven.MavenDependencyResolver;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.ws.rs.core.Response;
-import java.io.File;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.util.Date;
@@ -57,7 +51,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 /**
+ * The test case that uses RestEasy client API for calling the REST test.
  *
+ * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  */
 @WarpTest
 @RunWith(Arquillian.class)
@@ -71,13 +67,8 @@ public class StockServiceResourceTestCase {
     @Deployment
     @OverProtocol("Servlet 3.0")
     public static Archive createTestArchive() {
-        File[] libs = DependencyResolvers.use(MavenDependencyResolver.class)
-                .artifacts("org.easytesting:fest-assert:1.4").resolveAsFiles();
 
-        return ShrinkWrap.create(WebArchive.class)
-                .addClasses(StockApplication.class, Stock.class, StockService.class, StockServiceResource.class)
-                .addAsWebInfResource("WEB-INF/web.xml")
-                .addAsLibraries(libs);
+        return Deployments.createDeployment();
     }
 
     /**

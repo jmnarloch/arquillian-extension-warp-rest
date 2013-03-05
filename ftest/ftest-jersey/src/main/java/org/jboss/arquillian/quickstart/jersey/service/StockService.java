@@ -19,32 +19,61 @@ package org.jboss.arquillian.quickstart.jersey.service;
 
 import org.jboss.arquillian.quickstart.jersey.model.Stock;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
 
 /**
+ * A REST service contract.
  *
+ * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  */
 public interface StockService {
 
+    /**
+     * Creates new stock.
+     *
+     * @param stock the stock to create
+     *
+     * @return the response
+     */
     Response createStock(Stock stock);
 
+    /**
+     * Updates the stock.
+     *
+     * @param id    stock id
+     * @param stock the stock to update
+     */
     void updateStock(@PathParam("id") long id, Stock stock);
 
+    /**
+     * Retrieves the stock by it's id.
+     *
+     * @param id the stock id
+     *
+     * @return the stock that matches the given id
+     */
     Stock getStock(@PathParam("id") long id);
 
+    /**
+     * Retrieves the stock list.
+     *
+     * @param startIndex the starting index
+     * @param size       the number stocks to retrieve
+     *
+     * @return the list of stocks
+     */
     List<Stock> getStocks(@DefaultValue("0") @QueryParam("startIndex") int startIndex, @DefaultValue("10") @QueryParam("size") int size);
 
+    /**
+     * Deletes the stock
+     *
+     * @param id the stock id
+     *
+     * @return the response
+     */
     Response deleteStock(@PathParam("id") long id);
 }

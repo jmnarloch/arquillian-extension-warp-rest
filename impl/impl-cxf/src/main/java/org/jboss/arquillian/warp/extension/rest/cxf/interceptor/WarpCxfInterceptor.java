@@ -24,9 +24,7 @@ import org.apache.cxf.jaxrs.model.ClassResourceInfo;
 import org.apache.cxf.jaxrs.model.OperationResourceInfo;
 import org.apache.cxf.message.Message;
 import org.jboss.arquillian.warp.extension.rest.api.RestContext;
-import org.jboss.arquillian.warp.extension.rest.spi.WarpRestCommons;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
@@ -34,14 +32,12 @@ import javax.ws.rs.ext.Provider;
 import static org.jboss.arquillian.warp.extension.rest.cxf.interceptor.CxfContextBuilder.buildContext;
 
 /**
- * CXF interceptor. This class implements {@link RequestHandler} and {@link ResponseHandler} in order to capture the execution state within
- * the server.
- * <p/>
- * Implementation captures the state and stores it the {@link RestContext} which is being bound to
- * executing request.
+ * CXF interceptor. This class implements {@link RequestHandler} and {@link ResponseHandler} in order to capture the
+ * execution state within the server. <p/> Implementation captures the state and stores it the {@link RestContext} which
+ * is being bound to executing request.
  *
- * <p><strong>Thread-safety:</strong>This class can be considered as a thread safe. The class is mutable, but since
- * it's using {@link ThreadLocal} field for storing it's context it can be considered as a thread safe.</p>
+ * <p><strong>Thread-safety:</strong>This class can be considered as a thread safe. The class is mutable, but since it's
+ * using {@link ThreadLocal} field for storing it's context it can be considered as a thread safe.</p>
  *
  * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  */
@@ -49,25 +45,26 @@ import static org.jboss.arquillian.warp.extension.rest.cxf.interceptor.CxfContex
 public class WarpCxfInterceptor implements RequestHandler, ResponseHandler {
 
     /**
-     * Represents the servlet request.
-     */
-    private static final ThreadLocal<HttpServletRequest> servletRequest = new ThreadLocal<HttpServletRequest>();
-
-    /**
-     * Sets the message context.
-     *
-     * @param messageContext the message context
+     * The message context.
      */
     @Context
-    public void setMessageContext(MessageContext messageContext) {
-
-        // sets the http servlet request
-        servletRequest.set(messageContext.getHttpServletRequest());
-
-        // adds the message context to the builder
-        buildContext(servletRequest.get())
-                .setMessageContext(messageContext);
-    }
+    private MessageContext messageContext;
+//
+//    /**
+//     * Sets the message context.
+//     *
+//     * @param messageContext the message context
+//     */
+//    @Context
+//    public void setMessageContext(MessageContext messageContext) {
+//
+//        // sets the http servlet request
+//        servletRequest.set(messageContext.getHttpServletRequest());
+//
+//        // adds the message context to the builder
+//        buildContext(servletRequest.get())
+//                .setMessageContext(messageContext);
+//    }
 
     /**
      * {@inheritDoc}
@@ -76,7 +73,8 @@ public class WarpCxfInterceptor implements RequestHandler, ResponseHandler {
     public Response handleRequest(Message message, ClassResourceInfo classResourceInfo) {
 
         // captures the request message
-        buildContext(servletRequest.get())
+        buildContext(messageContext.getHttpServletRequest())
+                .setMessageContext(messageContext)
                 .setRequestMessage(message)
                 .build();
 
@@ -90,8 +88,11 @@ public class WarpCxfInterceptor implements RequestHandler, ResponseHandler {
     @Override
     public Response handleResponse(Message message, OperationResourceInfo operationResourceInfo, Response response) {
 
+        // servletRequest.set(messageContext.getHttpServletRequest());
+
         // sets the response
-        buildContext(servletRequest.get())
+        buildContext(messageContext.getHttpServletRequest())
+                .setMessageContext(messageContext)
                 .setResponseMessage(message)
                 .setResponse(response)
                 .build();

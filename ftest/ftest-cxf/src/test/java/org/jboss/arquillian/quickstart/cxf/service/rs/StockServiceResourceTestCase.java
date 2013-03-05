@@ -19,13 +19,11 @@ package org.jboss.arquillian.quickstart.cxf.service.rs;
 
 import org.apache.cxf.jaxrs.client.JAXRSClientFactory;
 import org.apache.cxf.jaxrs.client.WebClient;
-import org.apache.cxf.jaxrs.provider.JAXBElementProvider;
 import org.apache.cxf.jaxrs.provider.json.JSONProvider;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.OverProtocol;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.arquillian.quickstart.cxf.application.StockApplication;
 import org.jboss.arquillian.quickstart.cxf.model.Stock;
 import org.jboss.arquillian.quickstart.cxf.service.StockService;
 import org.jboss.arquillian.test.api.ArquillianResource;
@@ -37,17 +35,12 @@ import org.jboss.arquillian.warp.extension.rest.api.HttpMethod;
 import org.jboss.arquillian.warp.extension.rest.api.RestContext;
 import org.jboss.arquillian.warp.servlet.AfterServlet;
 import org.jboss.shrinkwrap.api.Archive;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.jboss.shrinkwrap.resolver.api.DependencyResolvers;
-import org.jboss.shrinkwrap.resolver.api.maven.MavenDependencyResolver;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.io.File;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.util.Arrays;
@@ -57,7 +50,9 @@ import static org.jboss.arquillian.warp.client.filter.http.HttpFilters.request;
 import static org.junit.Assert.assertEquals;
 
 /**
+ * The test case that uses CXF client API for calling the REST test.
  *
+ * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  */
 @WarpTest
 @RunWith(Arquillian.class)
@@ -72,22 +67,7 @@ public class StockServiceResourceTestCase {
     @OverProtocol("Servlet 3.0")
     public static Archive createTestArchive() {
 
-        File[] libs = DependencyResolvers.use(MavenDependencyResolver.class)
-                .loadMetadataFromPom("pom.xml")
-                .artifacts("org.easytesting:fest-assert")
-                .artifacts("org.apache.cxf:cxf-rt-frontend-jaxrs")
-                .artifacts("org.apache.cxf:cxf-rt-rs-extension-providers")
-                .artifacts("org.apache.cxf:cxf-rt-transports-http")
-                .artifacts("org.apache.cxf:cxf-rt-rs-extension-search")
-                .artifacts("org.codehaus.jettison:jettison")
-                .artifacts("org.springframework:spring-web")
-                .resolveAsFiles();
-
-        return ShrinkWrap.create(WebArchive.class)
-                .addClasses(StockApplication.class, Stock.class, StockService.class, StockServiceResource.class)
-                .addAsWebInfResource("WEB-INF/web.xml")
-                .addAsWebInfResource("WEB-INF/cxf.xml")
-                .addAsLibraries(libs);
+        return Deployments.createDeployment();
     }
 
     /**
@@ -114,6 +94,7 @@ public class StockServiceResourceTestCase {
 
         JSONProvider provider = new JSONProvider();
         provider.setSerializeAsArray(true);
+        provider.setConvention("badgerfish");
 
         stockService = JAXRSClientFactory.create(contextPath + "app/rest/",
                 StockService.class, Arrays.asList(provider));
@@ -153,7 +134,6 @@ public class StockServiceResourceTestCase {
     public void testStockGetWarp() {
 
         final Stock stock = createStock();
-
         stockService.createStock(stock);
 
         Warp.initiate(new Activity() {

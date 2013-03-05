@@ -34,33 +34,70 @@ import javax.ws.rs.core.Response;
 import java.util.List;
 
 /**
+ * A REST service contract.
  *
+ * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  */
 @Path("/stocks")
 @Consumes({MediaType.APPLICATION_JSON})
 @Produces({MediaType.APPLICATION_JSON})
 public interface StockService {
 
+    /**
+     * Creates new stock.
+     *
+     * @param stock the stock to create
+     *
+     * @return the response
+     */
     @Path("/")
     @POST
     @Consumes({MediaType.APPLICATION_JSON})
     Response createStock(Stock stock);
 
+    /**
+     * Updates the stock.
+     *
+     * @param id    stock id
+     * @param stock the stock to update
+     */
     @Path("/{id}")
     @PUT
     @Consumes({MediaType.APPLICATION_JSON})
     void updateStock(@PathParam("id") long id, Stock stock);
 
+    /**
+     * Retrieves the stock by it's id.
+     *
+     * @param id the stock id
+     *
+     * @return the stock that matches the given id
+     */
     @Path("/{id}")
     @GET
     @Produces({MediaType.APPLICATION_JSON})
     Stock getStock(@PathParam("id") long id);
 
+    /**
+     * Retrieves the stock list.
+     *
+     * @param startIndex the starting index
+     * @param size       the number stocks to retrieve
+     *
+     * @return the list of stocks
+     */
     @Path("/")
     @GET
     @Produces({MediaType.APPLICATION_JSON})
     List<Stock> getStocks(@DefaultValue("0") @QueryParam("startIndex") int startIndex, @DefaultValue("10") @QueryParam("size") int size);
 
+    /**
+     * Deletes the stock
+     *
+     * @param id the stock id
+     *
+     * @return the response
+     */
     @Path("/{id}")
     @DELETE
     @Consumes({MediaType.APPLICATION_JSON})

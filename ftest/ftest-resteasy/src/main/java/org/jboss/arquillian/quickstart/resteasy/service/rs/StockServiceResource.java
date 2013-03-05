@@ -22,7 +22,6 @@ import org.jboss.arquillian.quickstart.resteasy.service.StockService;
 
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import java.math.BigDecimal;
@@ -36,14 +35,20 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
+ * A REST service implementation.
  *
+ * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  */
 public class StockServiceResource implements StockService {
 
-    private static final int MAX_RESULTS = 5;
-
+    /**
+     * Stores the stocks using ids as map keys.
+     */
     private static final Map<Long, Stock> stockMap = new ConcurrentHashMap<Long, Stock>();
 
+    /**
+     * Counter used for assigning the id of newly created stocks.
+     */
     private static final AtomicLong counter = new AtomicLong(1L);
 
     /**
@@ -76,6 +81,9 @@ public class StockServiceResource implements StockService {
         return Response.created(URI.create("/stocks/" + stock.getId())).build();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void updateStock(@PathParam("id") long id, Stock stock) {
 
@@ -91,6 +99,9 @@ public class StockServiceResource implements StockService {
         current.setValue(stock.getValue());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Stock getStock(@PathParam("id") long id) {
 
@@ -102,27 +113,33 @@ public class StockServiceResource implements StockService {
         return stock;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public List<Stock> getStocks(@DefaultValue("0")int startIndex, @DefaultValue("10")int size)  {
+    public List<Stock> getStocks(@DefaultValue("0") int startIndex, @DefaultValue("10") int size) {
 
         // gets the list of all stocks in the current map
-        List<Stock> stocks = new ArrayList<Stock>(MAX_RESULTS);
+        List<Stock> stocks = new ArrayList<Stock>(size);
 
         Iterator<Stock> iter = stockMap.values().iterator();
         int count = 0;
 
         // skips records
-        while(iter.hasNext() && count < startIndex) {
+        while (iter.hasNext() && count < startIndex) {
             iter.next();
         }
 
-        while (iter.hasNext() && count < MAX_RESULTS) {
+        while (iter.hasNext() && count < size) {
             stocks.add(iter.next());
         }
 
         return stocks;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Response deleteStock(@PathParam("id") long id) {
 

@@ -18,7 +18,6 @@
 package org.jboss.arquillian.quickstart.jersey.application;
 
 import org.jboss.arquillian.quickstart.jersey.service.rs.StockServiceResource;
-import org.jboss.arquillian.warp.extension.rest.jersey.integration.WarpJerseyInterceptor;
 
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
@@ -26,7 +25,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
+ * The stock application
  *
+ * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  */
 @ApplicationPath("/")
 public class StockApplication extends Application {

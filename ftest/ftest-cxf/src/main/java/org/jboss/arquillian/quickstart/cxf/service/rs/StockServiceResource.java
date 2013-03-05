@@ -43,15 +43,23 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
+ * A REST service implementation.
  *
+ * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  */
 @Path("/stocks")
 @Consumes({MediaType.APPLICATION_JSON})
 @Produces({MediaType.APPLICATION_JSON})
 public class StockServiceResource implements StockService {
 
+    /**
+     * Stores the stocks using ids as map keys.
+     */
     private static final Map<Long, Stock> stockMap = new ConcurrentHashMap<Long, Stock>();
 
+    /**
+     * Counter used for assigning the id of newly created stocks.
+     */
     private static final AtomicLong counter = new AtomicLong(1L);
 
     /**
@@ -87,6 +95,9 @@ public class StockServiceResource implements StockService {
         return Response.created(URI.create("/stocks/" + stock.getId())).build();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Path("/{id}")
     @PUT
     @Consumes({MediaType.APPLICATION_JSON})
@@ -105,6 +116,9 @@ public class StockServiceResource implements StockService {
         current.setValue(stock.getValue());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Path("/{id}")
     @GET
     @Produces({MediaType.APPLICATION_JSON})
@@ -119,6 +133,9 @@ public class StockServiceResource implements StockService {
         return stock;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Path("/")
     @GET
     @Produces({MediaType.APPLICATION_JSON})
@@ -143,6 +160,9 @@ public class StockServiceResource implements StockService {
         return stocks;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Path("/{id}")
     @DELETE
     @Consumes({MediaType.APPLICATION_JSON})

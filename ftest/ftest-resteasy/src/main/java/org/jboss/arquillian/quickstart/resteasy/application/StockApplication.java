@@ -21,7 +21,9 @@ import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
 /**
+ * The stock application
  *
+ * @author <a href="mailto:jmnarloch@gmail.com">Jakub Narloch</a>
  */
 @ApplicationPath("/rest")
 public class StockApplication extends Application {
