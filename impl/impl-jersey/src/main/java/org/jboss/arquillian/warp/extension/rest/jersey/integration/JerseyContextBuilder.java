@@ -226,6 +226,10 @@ final class JerseyContextBuilder implements RestContextBuilder {
      */
     private MultivaluedMap<String, String> getHeaders(MultivaluedMap<String, Object> httpHeaders) {
 
+        if(httpHeaders == null) {
+            return null;
+        }
+
         MultivaluedMap<String, String> result = new MultivaluedMapImpl<String, String>();
         for (Map.Entry<String, List<Object>> entry : httpHeaders.entrySet()) {
             result.put(entry.getKey(), getHttpValueList(entry.getValue()));

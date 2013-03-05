@@ -177,6 +177,7 @@ final class CxfContextBuilder implements RestContextBuilder {
      *
      * @return the http request
      */
+    @SuppressWarnings("unchecked")
     private HttpRequest buildHttpRequest() {
 
         HttpRequestImpl request = new HttpRequestImpl();
@@ -184,7 +185,7 @@ final class CxfContextBuilder implements RestContextBuilder {
             request.setContentType((String) requestMessage.get(Message.CONTENT_TYPE));
             request.setEntity(getRequestEntity());
             request.setMethod(getRequestMethod((String) requestMessage.get(Message.HTTP_REQUEST_METHOD)));
-//            request.setHeaders((MultivaluedMap<String, String>) requestMessage.get(Message.PROTOCOL_HEADERS));
+            request.setHeaders(getHeaders((Map<String, List<String>>) requestMessage.get(Message.PROTOCOL_HEADERS)));
         }
 
         return request;
@@ -195,6 +196,7 @@ final class CxfContextBuilder implements RestContextBuilder {
      *
      * @return the http response
      */
+    @SuppressWarnings("unchecked")
     private HttpResponse buildHttpResponse() {
 
         HttpResponseImpl response = new HttpResponseImpl();
@@ -203,8 +205,8 @@ final class CxfContextBuilder implements RestContextBuilder {
             response.setContentType((String) responseMessage.get(Message.CONTENT_TYPE));
             response.setStatusCode(this.response.getStatus());
             response.setEntity(this.response.getEntity());
-//            response.setHeaders(getHeaders((MultivaluedMap<String, Object>)
-//                    this.responseMessage.get(Message.PROTOCOL_HEADERS)));
+            response.setHeaders(getHeaders((Map<String, List<String>>)
+                    this.responseMessage.get(Message.PROTOCOL_HEADERS)));
         }
 
         return response;
@@ -256,11 +258,15 @@ final class CxfContextBuilder implements RestContextBuilder {
      *
      * @return the result map
      */
-    private MultivaluedMap<String, String> getHeaders(MultivaluedMap<String, Object> httpHeaders) {
+    private MultivaluedMap<String, String> getHeaders(Map<String, List<String>> httpHeaders) {
+
+        if(httpHeaders == null) {
+            return null;
+        }
 
         MultivaluedMap<String, String> result = new MultivaluedMapImpl<String, String>();
-        for (Map.Entry<String, List<Object>> entry : httpHeaders.entrySet()) {
-            result.put(entry.getKey(), getHttpValueList(entry.getValue()));
+        for (Map.Entry<String, List<String>> entry : httpHeaders.entrySet()) {
+            result.put(entry.getKey(), getHeaderValueList(entry.getValue()));
         }
         return result;
     }
@@ -272,11 +278,11 @@ final class CxfContextBuilder implements RestContextBuilder {
      *
      * @return the list of values
      */
-    private List<String> getHttpValueList(List<Object> values) {
+    private List<String> getHeaderValueList(List<String> values) {
 
         List<String> result = new ArrayList<String>();
-        for (Object val : values) {
-            result.add(val.toString());
+        for (String val : values) {
+            result.add(val);
         }
         return result;
     }
