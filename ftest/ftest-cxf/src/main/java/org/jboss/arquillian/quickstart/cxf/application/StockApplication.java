@@ -19,7 +19,7 @@ package org.jboss.arquillian.quickstart.cxf.application;
 
 import org.apache.cxf.jaxrs.provider.json.JSONProvider;
 import org.jboss.arquillian.quickstart.cxf.service.rs.StockServiceResource;
-import org.jboss.arquillian.warp.extension.rest.cxf.interceptor.WarpCxfInterceptor;
+import org.jboss.arquillian.warp.extension.jaxrs.cxf.interceptor.WarpCxfInterceptor;
 
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;

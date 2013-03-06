@@ -7,12 +7,12 @@
 
     <!-- Artifact Configuration -->
     <groupId>org.jboss.arquillian.extension</groupId>
-    <artifactId>arquillian-warp-rest-bom</artifactId>
+    <artifactId>arquillian-warp-jaxrs-bom</artifactId>
     <version>1.0.0.Final-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>Arquillian Warp Rest Extension: BOM</name>
+    <name>Arquillian Warp JAX-RS Extension: BOM</name>
     <url>http://arquillian.org</url>
-    <description>Arquillian Warp Rest Bill Of Material</description>
+    <description>Arquillian Warp JAX-RS Bill Of Material</description>
 
     <issueManagement>
         <system>jira</system>
@@ -52,32 +52,32 @@
         <dependencies>
             <dependency>
                 <groupId>org.jboss.arquillian.extension</groupId>
-                <artifactId>arquillian-warp-rest-api</artifactId>
+                <artifactId>arquillian-warp-jaxrs-api</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.jboss.arquillian.extension</groupId>
-                <artifactId>arquillian-warp-rest-impl-base</artifactId>
+                <artifactId>arquillian-warp-jaxrs-impl-base</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.jboss.arquillian.extension</groupId>
-                <artifactId>arquillian-warp-rest-spi</artifactId>
+                <artifactId>arquillian-warp-jaxrs-spi</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.jboss.arquillian.extension</groupId>
-                <artifactId>arquillian-warp-rest-impl-resteasy</artifactId>
+                <artifactId>arquillian-warp-jaxrs-impl-resteasy</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.jboss.arquillian.extension</groupId>
-                <artifactId>arquillian-warp-rest-impl-jersey</artifactId>
+                <artifactId>arquillian-warp-jaxrs-impl-jersey</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.jboss.arquillian.extension</groupId>
-                <artifactId>arquillian-warp-rest-impl-cxf</artifactId>
+                <artifactId>arquillian-warp-jaxrs-impl-cxf</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>

@@ -5,18 +5,18 @@
     <!-- Parent -->
     <parent>
         <groupId>org.jboss.arquillian.extension</groupId>
-        <artifactId>arquillian-warp-ftest-parent</artifactId>
+        <artifactId>arquillian-warp-jaxrs-ftest-parent</artifactId>
         <version>1.0.0.Final-SNAPSHOT</version>
     </parent>
 
     <!-- Model Version -->
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>arquillian-warp-ftest-jersey</artifactId>
+    <artifactId>arquillian-warp-jaxrs-ftest-jersey</artifactId>
     <packaging>jar</packaging>
 
-    <name>Arquillian Warp Rest Extension: Jersey Functional Tests</name>
-    <description>Jersey Functional Tests for Arquillian Warp Rest</description>
+    <name>Arquillian Warp JAX-RS Extension: Jersey Functional Tests</name>
+    <description>Jersey Functional Tests for Arquillian Warp JAX-RS</description>
 
     <!-- Properties -->
     <properties>
@@ -61,7 +61,7 @@
 
         <dependency>
             <groupId>org.jboss.arquillian.extension</groupId>
-            <artifactId>arquillian-warp-rest-impl-jersey</artifactId>
+            <artifactId>arquillian-warp-jaxrs-impl-jersey</artifactId>
         </dependency>
 
         <dependency>

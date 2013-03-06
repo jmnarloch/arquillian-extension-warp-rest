@@ -5,18 +5,18 @@
     <!-- Parent -->
     <parent>
         <groupId>org.jboss.arquillian.extension</groupId>
-        <artifactId>arquillian-warp-rest-impl-parent</artifactId>
+        <artifactId>arquillian-warp-jaxrs-impl-parent</artifactId>
         <version>1.0.0.Final-SNAPSHOT</version>
     </parent>
 
     <!-- Model Version -->
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>arquillian-warp-rest-impl-resteasy</artifactId>
+    <artifactId>arquillian-warp-jaxrs-impl-resteasy</artifactId>
     <packaging>jar</packaging>
 
-    <name>Arquillian Warp Rest Extension: Resteasy</name>
-    <description>Resteasy implementation for Arquillian Warp Rest</description>
+    <name>Arquillian Warp JAX-RS Extension: Resteasy</name>
+    <description>Resteasy implementation for Arquillian Warp JAX-RS</description>
 
     <!-- Properties -->
     <properties>
@@ -36,17 +36,17 @@
 
         <dependency>
             <groupId>org.jboss.arquillian.extension</groupId>
-            <artifactId>arquillian-warp-rest-api</artifactId>
+            <artifactId>arquillian-warp-jaxrs-api</artifactId>
         </dependency>
 
         <dependency>
             <groupId>org.jboss.arquillian.extension</groupId>
-            <artifactId>arquillian-warp-rest-spi</artifactId>
+            <artifactId>arquillian-warp-jaxrs-spi</artifactId>
         </dependency>
 
         <dependency>
             <groupId>org.jboss.arquillian.extension</groupId>
-            <artifactId>arquillian-warp-rest-impl-base</artifactId>
+            <artifactId>arquillian-warp-jaxrs-impl-base</artifactId>
         </dependency>
 
         <dependency>
